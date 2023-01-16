@@ -129,6 +129,8 @@ public class TextEditor {
 			if(openfile) {
 				OpenFile();
 			}
+
+			RestoreCloseBehavior();
 		});
 
 		menuitem4.addActionListener(e -> {
@@ -155,6 +157,8 @@ public class TextEditor {
 			if(newdoc) {
 				NewDocument();
 			}
+
+			RestoreCloseBehavior();
 		});
 
 		menuitem6.addActionListener(e -> {
@@ -178,6 +182,8 @@ public class TextEditor {
 				frame.setVisible(false); //Nascondo il frame
 				frame.dispose(); //Distruggo il frame
 			}
+
+			RestoreCloseBehavior();
 		});
 
 		menuitem7.addActionListener(e -> {
@@ -207,6 +213,8 @@ public class TextEditor {
 			} else {
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			}
+
+			RestoreCloseBehavior();
 		});
 
 		textarea.getDocument().addDocumentListener(new DocumentListener() {
@@ -236,7 +244,7 @@ public class TextEditor {
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent windowEvent) {
-				if(!textarea.getText().equals("")) {
+				if(frame.getTitle().contains("*")) {
 
 					int dialog = ShowDialog(strings.get("WARNING"), strings.get("SAVE_BEFORE_EXIT"));
 
@@ -249,6 +257,8 @@ public class TextEditor {
 						frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 					}
 				}
+
+				RestoreCloseBehavior();
 			}
 		});
 	}
@@ -523,6 +533,13 @@ public class TextEditor {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	private static void RestoreCloseBehavior() {
+		//Se non ci sono più eventi in coda, ripristino il comportamento predefinito dell'evento di chiusura della finestra
+		if(Toolkit.getDefaultToolkit().getSystemEventQueue().peekEvent() == null) {
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		}
 	}
 }
