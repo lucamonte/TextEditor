@@ -389,7 +389,7 @@ public class TextEditor {
 				textarea.setText(null);
 
 				while(objscanner.hasNextLine()) {
-					textarea.append(objscanner.nextLine() + "\n");
+					textarea.append(objscanner.nextLine() + System.lineSeparator());
 				}
 
 				oldtext = textarea.getText();
