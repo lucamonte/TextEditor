@@ -140,7 +140,7 @@ public class TextEditor {
 		menuitem5.addActionListener(e -> {
 			boolean newdoc = true;
 
-			if(openfilepath.equals("") && !textarea.getText().equals("")) {
+			if(openfilepath.equals("") && SavedDocument()) {
 				int dialog = ShowDialog(strings.get("WARNING"), strings.get("SAVE_BEFORE_CONTINUE"));
 
 				if(dialog == JOptionPane.YES_OPTION) {
@@ -164,7 +164,7 @@ public class TextEditor {
 		menuitem6.addActionListener(e -> {
 			boolean close = true;
 
-			if(openfilepath.equals("") && !textarea.getText().equals("")) {
+			if(openfilepath.equals("") && SavedDocument()) {
 				int dialog = ShowDialog(strings.get("WARNING"), strings.get("SAVE_BEFORE_EXIT"));
 
 				if(dialog == JOptionPane.YES_OPTION) {
@@ -244,7 +244,7 @@ public class TextEditor {
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent windowEvent) {
-				if(frame.getTitle().contains("*")) {
+				if(!SavedDocument()) {
 
 					int dialog = ShowDialog(strings.get("WARNING"), strings.get("SAVE_BEFORE_EXIT"));
 
@@ -437,7 +437,7 @@ public class TextEditor {
 	}
 
 	private static void CheckEditing(boolean saved) {
-		if(!oldtext.equals(textarea.getText()) && !frame.getTitle().contains("*")) {
+		if(!oldtext.equals(textarea.getText()) && SavedDocument()) {
 			frame.setTitle("* " + frame.getTitle());
 		}
 
@@ -541,5 +541,9 @@ public class TextEditor {
 		if(Toolkit.getDefaultToolkit().getSystemEventQueue().peekEvent() == null) {
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		}
+	}
+
+	private static boolean SavedDocument() {
+		return frame.getTitle().contains("*") ? false : true;
 	}
 }
