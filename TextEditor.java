@@ -110,6 +110,8 @@ public class TextEditor {
 		});	
 
 		menuitem3.addActionListener(e -> {
+			boolean openfile = true;
+
 			if(openfilepath.equals("") && !textarea.getText().equals("")) {
 				int dialog = ShowDialog(strings.get("WARNING"), strings.get("SAVE_BEFORE_CONTINUE"));
 
@@ -117,12 +119,16 @@ public class TextEditor {
 					SaveFile();
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				} else if (dialog == JOptionPane.CLOSED_OPTION) {
+					openfile = false;
 					frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 				} else {
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				}
 			}
-			OpenFile();
+
+			if(openfile) {
+				OpenFile();
+			}
 		});
 
 		menuitem4.addActionListener(e -> {
@@ -130,6 +136,8 @@ public class TextEditor {
 		});
 
 		menuitem5.addActionListener(e -> {
+			boolean newdoc = true;
+
 			if(openfilepath.equals("") && !textarea.getText().equals("")) {
 				int dialog = ShowDialog(strings.get("WARNING"), strings.get("SAVE_BEFORE_CONTINUE"));
 
@@ -138,11 +146,15 @@ public class TextEditor {
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				} else if (dialog == JOptionPane.CLOSED_OPTION) {
 					frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+					newdoc = false;
 				} else {
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				}
 			}
-			NewDocument();
+
+			if(newdoc) {
+				NewDocument();
+			}
 		});
 
 		menuitem6.addActionListener(e -> {
