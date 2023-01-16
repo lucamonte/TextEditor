@@ -140,7 +140,7 @@ public class TextEditor {
 		menuitem5.addActionListener(e -> {
 			boolean newdoc = true;
 
-			if(openfilepath.equals("") && SavedDocument()) {
+			if(openfilepath.equals("") && !SavedDocument()) {
 				int dialog = ShowDialog(strings.get("WARNING"), strings.get("SAVE_BEFORE_CONTINUE"));
 
 				if(dialog == JOptionPane.YES_OPTION) {
@@ -164,7 +164,7 @@ public class TextEditor {
 		menuitem6.addActionListener(e -> {
 			boolean close = true;
 
-			if(openfilepath.equals("") && SavedDocument()) {
+			if(openfilepath.equals("") && !SavedDocument()) {
 				int dialog = ShowDialog(strings.get("WARNING"), strings.get("SAVE_BEFORE_EXIT"));
 
 				if(dialog == JOptionPane.YES_OPTION) {
@@ -437,7 +437,7 @@ public class TextEditor {
 	}
 
 	private static void CheckEditing(boolean saved) {
-		if(!oldtext.equals(textarea.getText()) && SavedDocument()) {
+		if(!oldtext.equals(textarea.getText()) && !SavedDocument()) {
 			frame.setTitle("* " + frame.getTitle());
 		}
 
