@@ -29,22 +29,22 @@ public class TextEditor {
 	private static Image icon;
 	protected static Hashtable<String, String> strings = new Hashtable<String, String>();
 
-	private static JMenuItem menuitem1;
-	private static JMenuItem menuitem2;
-	private static JMenuItem menuitem3;
-	private static JMenuItem menuitem4;
-	private static JMenuItem menuitem5;
-	private static JMenuItem menuitem6;
-	private static JMenuItem menuitem7;
-	private static JMenuItem menuitem8;
-	private static JMenuItem menuitem9;
-	private static JMenuItem menuitem10;
-	private static JMenuItem menuitem11;
+	private static JMenuItem menuitem_saveas;
+	private static JMenuItem menuitem_deleteall;
+	private static JMenuItem menuitem_open;
+	private static JMenuItem menuitem_save;
+	private static JMenuItem menuitem_new;
+	private static JMenuItem menuitem_exit;
+	private static JMenuItem menuitem_selectall;
+	private static JMenuItem menuitem_copy;
+	private static JMenuItem menuitem_cut;
+	private static JMenuItem menuitem_paste;
+	private static JMenuItem menuitem_delete;
 
 	private static JMenuBar menubar;
 
-	private static JMenu menu1;
-	private static JMenu menu2;
+	private static JMenu menu_file;
+	private static JMenu menu_text;
 
 	private static KeyStroke shortcut_save;
 	private static KeyStroke shortcut_new;
@@ -99,16 +99,16 @@ public class TextEditor {
 	}
 
 	private static void SetupBusinessLogic() {
-		menuitem1.addActionListener(e -> {
+		menuitem_saveas.addActionListener(e -> {
 			openfilepath = "";
 			SaveFile();
 		});
 
-		menuitem2.addActionListener(e -> {
+		menuitem_deleteall.addActionListener(e -> {
 			ResetTextArea();
 		});	
 
-		menuitem3.addActionListener(e -> {
+		menuitem_open.addActionListener(e -> {
 			boolean openfile = true;
 
 			if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && CheckAsterisk())) {
@@ -132,11 +132,11 @@ public class TextEditor {
 			RestoreCloseBehavior();
 		});
 
-		menuitem4.addActionListener(e -> {
+		menuitem_save.addActionListener(e -> {
 			SaveFile();
 		});
 
-		menuitem5.addActionListener(e -> {
+		menuitem_new.addActionListener(e -> {
 			boolean newdoc = true;
 
 			if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && CheckAsterisk())) {
@@ -160,7 +160,7 @@ public class TextEditor {
 			RestoreCloseBehavior();
 		});
 
-		menuitem6.addActionListener(e -> {
+		menuitem_exit.addActionListener(e -> {
 			boolean close = true;
 
 			if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && CheckAsterisk())) {
@@ -185,23 +185,23 @@ public class TextEditor {
 			RestoreCloseBehavior();
 		});
 
-		menuitem7.addActionListener(e -> {
+		menuitem_selectall.addActionListener(e -> {
 			textarea.selectAll();
 		});
 
-		menuitem8.addActionListener(e -> {
+		menuitem_copy.addActionListener(e -> {
 			textarea.copy();
 		});
 
-		menuitem9.addActionListener(e -> {
+		menuitem_cut.addActionListener(e -> {
 			textarea.cut();
 		});
 
-		menuitem10.addActionListener(e -> {
+		menuitem_paste.addActionListener(e -> {
 			textarea.paste();
 		});
 
-		menuitem11.addActionListener(e -> {
+		menuitem_delete.addActionListener(e -> {
 			int dialog = ShowDialog(strings.get("WARNING"), strings.get("DELETE_CONFIRMATION"));
 
 			if(dialog == JOptionPane.YES_OPTION) {
@@ -294,8 +294,8 @@ public class TextEditor {
 	private static void CreateMenu() {
 		menubar = new JMenuBar();
 
-		menubar.add(menu1);
-		menubar.add(menu2);
+		menubar.add(menu_file);
+		menubar.add(menu_text);
 	}
 
 	private static void CreateKeyStrokes() {
@@ -315,31 +315,31 @@ public class TextEditor {
 	}
 
 	private static void SetAccelerators() {
-		menuitem1.setAccelerator(shortcut_saveas);
-		menuitem2.setAccelerator(shortcut_deleteall);
-		menuitem3.setAccelerator(shortcut_open);
-		menuitem4.setAccelerator(shortcut_save);
-		menuitem5.setAccelerator(shortcut_new);
-		menuitem6.setAccelerator(shortcut_exit);
-		menuitem7.setAccelerator(shortcut_selectall);
-		menuitem8.setAccelerator(shortcut_copy);
-		menuitem9.setAccelerator(shortcut_cut);
-		menuitem10.setAccelerator(shortcut_paste);
-		menuitem11.setAccelerator(shortcut_delete);
+		menuitem_saveas.setAccelerator(shortcut_saveas);
+		menuitem_deleteall.setAccelerator(shortcut_deleteall);
+		menuitem_open.setAccelerator(shortcut_open);
+		menuitem_save.setAccelerator(shortcut_save);
+		menuitem_new.setAccelerator(shortcut_new);
+		menuitem_exit.setAccelerator(shortcut_exit);
+		menuitem_selectall.setAccelerator(shortcut_selectall);
+		menuitem_copy.setAccelerator(shortcut_copy);
+		menuitem_cut.setAccelerator(shortcut_cut);
+		menuitem_paste.setAccelerator(shortcut_paste);
+		menuitem_delete.setAccelerator(shortcut_delete);
 	}
 
 	private static void AddMenuItems() {
-		menu1.add(menuitem5);
-		menu1.add(menuitem3);
-		menu1.add(menuitem4);
-		menu1.add(menuitem1);
-		menu1.add(menuitem11);
-		menu1.add(menuitem6);
-		menu2.add(menuitem2);
-		menu2.add(menuitem7);
-		menu2.add(menuitem8);
-		menu2.add(menuitem9);
-		menu2.add(menuitem10);
+		menu_file.add(menuitem_new);
+		menu_file.add(menuitem_open);
+		menu_file.add(menuitem_save);
+		menu_file.add(menuitem_saveas);
+		menu_file.add(menuitem_delete);
+		menu_file.add(menuitem_exit);
+		menu_text.add(menuitem_deleteall);
+		menu_text.add(menuitem_selectall);
+		menu_text.add(menuitem_copy);
+		menu_text.add(menuitem_cut);
+		menu_text.add(menuitem_paste);
 	}
 
 	private static void ResetTextArea() {
@@ -458,30 +458,30 @@ public class TextEditor {
 
 	private static void CheckButtons() {
 		if(openfilepath.equals("")) {
-			menuitem11.setEnabled(false);
+			menuitem_delete.setEnabled(false);
 		} else {
-			menuitem11.setEnabled(true);
+			menuitem_delete.setEnabled(true);
 		}
 
 		if(textarea.getText().equals("")) {
-			menu2.setEnabled(false);
+			menu_text.setEnabled(false);
 		} else {
-			menu2.setEnabled(true);
+			menu_text.setEnabled(true);
 		}
 
 		try {
 			if(textarea.getSelectedText() != null) {
-				menuitem8.setEnabled(true);
-				menuitem9.setEnabled(true);
-				menuitem10.setEnabled(true);
+				menuitem_copy.setEnabled(true);
+				menuitem_cut.setEnabled(true);
+				menuitem_paste.setEnabled(true);
 			} else {
-				menuitem8.setEnabled(false);
-				menuitem9.setEnabled(false);
-				menuitem10.setEnabled(false);
+				menuitem_copy.setEnabled(false);
+				menuitem_cut.setEnabled(false);
+				menuitem_paste.setEnabled(false);
 			}
 		} catch(IllegalArgumentException e) {
 			/* Quando viene cancellata una selezione composta da più caratteri,
-			 * viene lanciata una IllegalArgumentException, che devo ignorare */
+			 * viene sollevata una IllegalArgumentException, che devo ignorare */
 		}
 	}
 
@@ -490,24 +490,27 @@ public class TextEditor {
 		Config.Parse();
 
 		frame = new JFrame(strings.get("WINDOW_NAME"));
-		menu1 = new JMenu(strings.get("FILE_MENU"));
-		menu2 = new JMenu(strings.get("TEXT_MENU"));
-		menuitem1 = new JMenuItem(strings.get("SAVE_AS"));
-		menuitem2 = new JMenuItem(strings.get("DELETE_ALL"));
-		menuitem3 = new JMenuItem(strings.get("OPEN_FILE"));
-		menuitem4 = new JMenuItem(strings.get("SAVE_FILE"));
-		menuitem5 = new JMenuItem(strings.get("NEW_FILE"));
-		menuitem6 = new JMenuItem(strings.get("CLOSE_EDITOR"));
-		menuitem7 = new JMenuItem(strings.get("SELECT_ALL"));
-		menuitem8 = new JMenuItem(strings.get("COPY"));
-		menuitem9 = new JMenuItem(strings.get("CUT"));
-		menuitem10 = new JMenuItem(strings.get("PASTE"));
-		menuitem11 = new JMenuItem(strings.get("DELETE_FILE"));
+		menu_file = new JMenu(strings.get("FILE_MENU"));
+		menu_text = new JMenu(strings.get("TEXT_MENU"));
+		menuitem_saveas = new JMenuItem(strings.get("SAVE_AS"));
+		menuitem_deleteall = new JMenuItem(strings.get("DELETE_ALL"));
+		menuitem_open = new JMenuItem(strings.get("OPEN_FILE"));
+		menuitem_save = new JMenuItem(strings.get("SAVE_FILE"));
+		menuitem_new = new JMenuItem(strings.get("NEW_FILE"));
+		menuitem_exit = new JMenuItem(strings.get("CLOSE_EDITOR"));
+		menuitem_selectall = new JMenuItem(strings.get("SELECT_ALL"));
+		menuitem_copy = new JMenuItem(strings.get("COPY"));
+		menuitem_cut = new JMenuItem(strings.get("CUT"));
+		menuitem_paste = new JMenuItem(strings.get("PASTE"));
+		menuitem_delete = new JMenuItem(strings.get("DELETE_FILE"));
 
 	}
 
 	private static void SetIcon() {
 		StringBuilder stringbuilder = new StringBuilder(applicationpath + "icon.png");
+
+		/* Su Windows, nella applicationpath viene aggiunta una \ alla fine, che causa un errore con la classe File. 
+		 * Rimuovo il primo carattere della stringa (\), in modo da avere a disposizione un percorso file pulito */
 
 		if(System.getProperty("os.name").toLowerCase().contains("windows")) {
 			stringbuilder.deleteCharAt(0);
