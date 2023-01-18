@@ -7,8 +7,8 @@ import java.util.Scanner;
 
 public class Config extends TextEditor {
 
-	protected final static String SEPARATOR = "=";
-	protected final static String FILE_PATH = applicationpath + "strings.txt";
+	private final static String SEPARATOR = "=";
+	private final static String FILE_PATH = applicationpath + "strings.txt";
 
 	public static void Parse() {
 
