@@ -16,9 +16,7 @@ public class Config extends TextEditor {
 
 		try {
 
-			File objfile = new File(FILE_PATH);
-
-			Scanner objscanner = new Scanner(objfile);
+			Scanner objscanner = new Scanner(new File(FILE_PATH));
 
 			while(objscanner.hasNextLine()) {
 				splitline = objscanner.nextLine().split(SEPARATOR, -2);
