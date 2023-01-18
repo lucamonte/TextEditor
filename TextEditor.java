@@ -21,12 +21,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class TextEditor {
 
-	protected static TextEditor instance = new TextEditor();
 	private static String openfilepath = "";
 	private static JFileChooser filechooser = new JFileChooser();
 	private static String oldtext = "";
 	private static JFrame frame;
-	protected static String applicationpath = instance.getClass().getClassLoader().getResource("").getPath();
+	protected static String applicationpath = new TextEditor().getClass().getClassLoader().getResource("").getPath();
 	private static Image icon;
 	protected static Hashtable<String, String> strings = new Hashtable<String, String>();
 
