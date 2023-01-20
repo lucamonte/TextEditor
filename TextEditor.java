@@ -285,6 +285,13 @@ public class TextEditor {
 
 	private static void SetupFontChooser() {
 		fontchooser = new JFontChooser();
+		fontchooser.setFontSelectionDialogStrings(
+				strings.get("FONT_CHOOSER_TITLE"),
+				strings.get("FONT_CHOOSER_FONT_NAME"),
+				strings.get("FONT_CHOOSER_FONT_STYLE"),
+				strings.get("FONT_CHOOSER_FONT_SIZE"),
+				strings.get("FONT_CHOOSER_OK_BUTTON"),
+				strings.get("FONT_CHOOSER_CANCEL_BUTTON"));
 	}
 
 	private static void SetupFrame() {
@@ -492,24 +499,30 @@ public class TextEditor {
 		}
 
 		if(textarea.getText().equals("")) {
-			menu_text.setEnabled(false);
+			menuitem_deleteall.setEnabled(false);
+			menuitem_selectall.setEnabled(false);
 		} else {
-			menu_text.setEnabled(true);
+			menuitem_deleteall.setEnabled(true);
+			menuitem_selectall.setEnabled(true);
 		}
 
 		try {
 			if(textarea.getSelectedText() != null) {
 				menuitem_copy.setEnabled(true);
 				menuitem_cut.setEnabled(true);
-				menuitem_paste.setEnabled(true);
 			} else {
 				menuitem_copy.setEnabled(false);
 				menuitem_cut.setEnabled(false);
-				menuitem_paste.setEnabled(false);
 			}
 		} catch(IllegalArgumentException e) {
 			/* Quando viene cancellata una selezione composta da più caratteri,
 			 * viene sollevata una IllegalArgumentException, che devo ignorare */
+		}
+
+		if(Toolkit.getDefaultToolkit().getSystemClipboard() != null) {
+			menuitem_paste.setEnabled(true);
+		} else {
+			menuitem_paste.setEnabled(false);
 		}
 	}
 
@@ -531,7 +544,7 @@ public class TextEditor {
 		menuitem_cut = new JMenuItem(strings.get("CUT"));
 		menuitem_paste = new JMenuItem(strings.get("PASTE"));
 		menuitem_delete = new JMenuItem(strings.get("DELETE_FILE"));
-		menuitem_selectfont = new JMenuItem("Formato");
+		menuitem_selectfont = new JMenuItem(strings.get("TEXT_FORMAT"));
 
 	}
 
