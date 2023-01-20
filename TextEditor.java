@@ -285,13 +285,6 @@ public class TextEditor {
 
 	private static void SetupFontChooser() {
 		fontchooser = new JFontChooser();
-		fontchooser.setFontSelectionDialogStrings(
-				strings.get("FONT_CHOOSER_TITLE"),
-				strings.get("FONT_CHOOSER_FONT_NAME"),
-				strings.get("FONT_CHOOSER_FONT_STYLE"),
-				strings.get("FONT_CHOOSER_FONT_SIZE"),
-				strings.get("FONT_CHOOSER_OK_BUTTON"),
-				strings.get("FONT_CHOOSER_CANCEL_BUTTON"));
 	}
 
 	private static void SetupFrame() {
@@ -597,5 +590,9 @@ public class TextEditor {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	protected static String GetString(String key) {
+		return strings.get(key);
 	}
 }
