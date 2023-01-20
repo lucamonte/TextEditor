@@ -591,7 +591,7 @@ public class JFontChooser extends JComponent
 
 	protected class DialogOKAction extends AbstractAction
 	{
-		protected final String ACTION_NAME = fontDialog_OkButton;
+		protected final String ACTION_NAME = TextEditor.GetString("FONT_CHOOSER_OK_BUTTON");
 		private JDialog dialog;
 
 		protected DialogOKAction(JDialog dialog)
@@ -611,7 +611,7 @@ public class JFontChooser extends JComponent
 
 	protected class DialogCancelAction extends AbstractAction
 	{
-		protected final String ACTION_NAME = fontDialog_CancelButton;
+		protected final String ACTION_NAME = TextEditor.GetString("FONT_CHOOSER_CANCEL_BUTTON");
 		private JDialog dialog;
 
 		protected DialogCancelAction(JDialog dialog)
@@ -633,7 +633,7 @@ public class JFontChooser extends JComponent
 	{
 		Frame frame = parent instanceof Frame ? (Frame) parent
 				: (Frame) SwingUtilities.getAncestorOfClass(Frame.class, parent);
-		JDialog dialog = new JDialog(frame, TextEditor.GetString("FILE_CHOOSER_TITLE"), true);
+		JDialog dialog = new JDialog(frame, TextEditor.GetString("FONT_CHOOSER_TITLE"), true);
 
 		Action okAction = new DialogOKAction(dialog);
 		Action cancelAction = new DialogCancelAction(dialog);
@@ -691,7 +691,7 @@ public class JFontChooser extends JComponent
 			p.add(getFontFamilyTextField(), BorderLayout.NORTH);
 			p.add(scrollPane, BorderLayout.CENTER);
 
-			JLabel label = new JLabel(fontDialog_FontName);
+			JLabel label = new JLabel(TextEditor.GetString("FONT_CHOOSER_FONT_NAME"));
 			label.setHorizontalAlignment(JLabel.LEFT);
 			label.setHorizontalTextPosition(JLabel.LEFT);
 			label.setLabelFor(getFontFamilyTextField());
@@ -722,7 +722,7 @@ public class JFontChooser extends JComponent
 			p.add(getFontStyleTextField(), BorderLayout.NORTH);
 			p.add(scrollPane, BorderLayout.CENTER);
 
-			JLabel label = new JLabel(fontDialog_FontStyle);
+			JLabel label = new JLabel(TextEditor.GetString("FONT_CHOOSER_FONT_STYLE"));
 			label.setHorizontalAlignment(JLabel.LEFT);
 			label.setHorizontalTextPosition(JLabel.LEFT);
 			label.setLabelFor(getFontStyleTextField());
@@ -752,7 +752,7 @@ public class JFontChooser extends JComponent
 			p.add(getFontSizeTextField(), BorderLayout.NORTH);
 			p.add(scrollPane, BorderLayout.CENTER);
 
-			JLabel label = new JLabel(fontDialog_FontSize);
+			JLabel label = new JLabel(TextEditor.GetString("FONT_CHOOSER_FONT_SIZE"));
 			label.setHorizontalAlignment(JLabel.LEFT);
 			label.setHorizontalTextPosition(JLabel.LEFT);
 			label.setLabelFor(getFontSizeTextField());
@@ -769,7 +769,7 @@ public class JFontChooser extends JComponent
 		if (samplePanel == null)
 		{
 			Border titledBorder = BorderFactory.createTitledBorder(
-					BorderFactory.createEtchedBorder(), ("Sample"));
+					BorderFactory.createEtchedBorder(), TextEditor.GetString("FONT_CHOOSER_SAMPLE"));
 			Border empty = BorderFactory.createEmptyBorder(5, 10, 10, 10);
 			Border border = BorderFactory.createCompoundBorder(titledBorder, empty);
 
@@ -810,11 +810,12 @@ public class JFontChooser extends JComponent
 		if (fontStyleNames == null)
 		{
 			int i = 0;
+
 			fontStyleNames = new String[4];
-			fontStyleNames[i++] = ("Plain");
-			fontStyleNames[i++] = ("Bold");
-			fontStyleNames[i++] = ("Italic");
-			fontStyleNames[i++] = ("BoldItalic");
+			fontStyleNames[i++] = TextEditor.GetString("FONT_CHOOSER_REGULAR");
+			fontStyleNames[i++] = TextEditor.GetString("FONT_CHOOSER_BOLD");
+			fontStyleNames[i++] = TextEditor.GetString("FONT_CHOOSER_ITALIC");
+			fontStyleNames[i++] = TextEditor.GetString("FONT_CHOOSER_BOLDITALIC");
 		}
 		return fontStyleNames;
 	}
