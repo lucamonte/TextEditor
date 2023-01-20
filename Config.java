@@ -11,7 +11,7 @@ public class Config extends TextEditor {
 	private final static String SEPARATOR = "=";
 	private final static String FILE_PATH = applicationpath + "strings.txt";
 
-	public static void Parse() {
+	protected static void Parse() {
 
 		String[] splitline;
 
@@ -41,7 +41,7 @@ public class Config extends TextEditor {
 
 	}
 
-	public static boolean WriteDefault() {
+	private static boolean WriteDefault() {
 
 		String key;
 		boolean success = true;
@@ -76,7 +76,7 @@ public class Config extends TextEditor {
 		return success;
 	}
 
-	public static void SetDefaultValues() {
+	private static void SetDefaultValues() {
 
 		strings.put("WINDOW_NAME", "Blocco note");
 		strings.put("FILE_MENU", "File");
