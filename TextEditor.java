@@ -126,7 +126,7 @@ public class TextEditor {
 			boolean openfile = true;
 
 			if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && CheckAsterisk())) {
-				int dialog = ShowDialog(strings.get("WARNING"), strings.get("SAVE_BEFORE_CONTINUE"));
+				int dialog = ShowDialog(GetString("WARNING"), GetString("SAVE_BEFORE_CONTINUE"));
 
 				if(dialog == JOptionPane.YES_OPTION) {
 					SaveFile();
@@ -154,7 +154,7 @@ public class TextEditor {
 			boolean newdoc = true;
 
 			if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && CheckAsterisk())) {
-				int dialog = ShowDialog(strings.get("WARNING"), strings.get("SAVE_BEFORE_CONTINUE"));
+				int dialog = ShowDialog(GetString("WARNING"), GetString("SAVE_BEFORE_CONTINUE"));
 
 				if(dialog == JOptionPane.YES_OPTION) {
 					SaveFile();
@@ -178,7 +178,7 @@ public class TextEditor {
 			boolean close = true;
 
 			if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && CheckAsterisk())) {
-				int dialog = ShowDialog(strings.get("WARNING"), strings.get("SAVE_BEFORE_EXIT"));
+				int dialog = ShowDialog(GetString("WARNING"), GetString("SAVE_BEFORE_EXIT"));
 
 				if(dialog == JOptionPane.YES_OPTION) {
 					SaveFile();
@@ -216,7 +216,7 @@ public class TextEditor {
 		});
 
 		menuitem_delete.addActionListener(e -> {
-			int dialog = ShowDialog(strings.get("WARNING"), strings.get("DELETE_CONFIRMATION"));
+			int dialog = ShowDialog(GetString("WARNING"), GetString("DELETE_CONFIRMATION"));
 
 			if(dialog == JOptionPane.YES_OPTION) {
 				DeleteFile();
@@ -267,7 +267,7 @@ public class TextEditor {
 			public void windowClosing(WindowEvent windowEvent) {
 				if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && CheckAsterisk())) {
 
-					int dialog = ShowDialog(strings.get("WARNING"), strings.get("SAVE_BEFORE_EXIT"));
+					int dialog = ShowDialog(GetString("WARNING"), GetString("SAVE_BEFORE_EXIT"));
 
 					if(dialog == JOptionPane.YES_OPTION) {
 						SaveFile();
@@ -294,7 +294,7 @@ public class TextEditor {
 	private static void SetupFileChooser() {
 		filechooser = new JFileChooser();
 		filechooser.setAcceptAllFileFilterUsed(false);
-		filechooser.addChoosableFileFilter(new FileNameExtensionFilter(strings.get("TXT_FILE_EXTENSION_DESCRIPTION"), "txt"));
+		filechooser.addChoosableFileFilter(new FileNameExtensionFilter(GetString("TXT_FILE_EXTENSION_DESCRIPTION"), "txt"));
 	}
 
 	private static void SetupFontChooser() {
@@ -531,7 +531,8 @@ public class TextEditor {
 		try {
 			clipboardtext = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
 		} catch (UnsupportedFlavorException e) {
-			//Se si è generata una UnsupportedFlavorException, la uso per capire che nella clipboard non c'è un testo
+			/* Se si è generata una UnsupportedFlavorException, la uso per capire che nella clipboard non c'è un testo
+			 * e che quindi devo disattivare il bottone "incolla" */
 			clipboardtext = "";
 		} catch (Exception e) {
 			//Se si è generato un qualsiasi altro tipo di eccezione, scrivo lo stack trace
@@ -549,21 +550,21 @@ public class TextEditor {
 		//Lettura file di configurazione contenente le stringhe
 		Config.Parse();
 
-		frame = new JFrame(strings.get("WINDOW_NAME"));
-		menu_file = new JMenu(strings.get("FILE_MENU"));
-		menu_text = new JMenu(strings.get("TEXT_MENU"));
-		menuitem_saveas = new JMenuItem(strings.get("SAVE_AS"));
-		menuitem_deleteall = new JMenuItem(strings.get("DELETE_ALL"));
-		menuitem_open = new JMenuItem(strings.get("OPEN_FILE"));
-		menuitem_save = new JMenuItem(strings.get("SAVE_FILE"));
-		menuitem_new = new JMenuItem(strings.get("NEW_FILE"));
-		menuitem_exit = new JMenuItem(strings.get("CLOSE_EDITOR"));
-		menuitem_selectall = new JMenuItem(strings.get("SELECT_ALL"));
-		menuitem_copy = new JMenuItem(strings.get("COPY"));
-		menuitem_cut = new JMenuItem(strings.get("CUT"));
-		menuitem_paste = new JMenuItem(strings.get("PASTE"));
-		menuitem_delete = new JMenuItem(strings.get("DELETE_FILE"));
-		menuitem_selectfont = new JMenuItem(strings.get("TEXT_FORMAT"));
+		frame = new JFrame(GetString("WINDOW_NAME"));
+		menu_file = new JMenu(GetString("FILE_MENU"));
+		menu_text = new JMenu(GetString("TEXT_MENU"));
+		menuitem_saveas = new JMenuItem(GetString("SAVE_AS"));
+		menuitem_deleteall = new JMenuItem(GetString("DELETE_ALL"));
+		menuitem_open = new JMenuItem(GetString("OPEN_FILE"));
+		menuitem_save = new JMenuItem(GetString("SAVE_FILE"));
+		menuitem_new = new JMenuItem(GetString("NEW_FILE"));
+		menuitem_exit = new JMenuItem(GetString("CLOSE_EDITOR"));
+		menuitem_selectall = new JMenuItem(GetString("SELECT_ALL"));
+		menuitem_copy = new JMenuItem(GetString("COPY"));
+		menuitem_cut = new JMenuItem(GetString("CUT"));
+		menuitem_paste = new JMenuItem(GetString("PASTE"));
+		menuitem_delete = new JMenuItem(GetString("DELETE_FILE"));
+		menuitem_selectfont = new JMenuItem(GetString("TEXT_FORMAT"));
 
 	}
 
