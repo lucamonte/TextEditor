@@ -1,4 +1,5 @@
 package TextEditor;
+
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.KeyEvent;
@@ -62,9 +63,6 @@ public class TextEditor {
 	private static JScrollPane scroll;
 
 	public static void Run() {
-		//Impostazione dello stile dei componenti della UI. Commentare per utilizzare lo stile di default di AWT/Swing
-		SetLookAndFeel();
-
 		//Generazione della finestra e relativi elementi
 		SetupWindow();
 
@@ -73,6 +71,9 @@ public class TextEditor {
 	}
 
 	private static void SetupWindow() {
+		//Impostazione dello stile dei componenti della UI. Commentare per utilizzare lo stile di default di AWT/Swing
+		SetLookAndFeel();
+
 		//Lettura delle stringhe degli elementi dell'interfaccia
 		LoadStrings();
 
@@ -283,7 +284,11 @@ public class TextEditor {
 		textarea = new JTextArea();
 		scroll = new JScrollPane(textarea);
 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		scroll.setBorder(null);
+
+		if(UIManager.getLookAndFeel().getClass().toString().contains(UIManager.getSystemLookAndFeelClassName())) {
+			scroll.setBorder(null);
+		}
+
 		oldtext = textarea.getText();
 		textarea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 15));
 		textarea.setEditable(true);
@@ -558,7 +563,7 @@ public class TextEditor {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 	}
 }
