@@ -1,12 +1,17 @@
 package TextEditor;
 
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.FlavorEvent;
+import java.awt.datatransfer.FlavorListener;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.WindowEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
@@ -227,8 +232,11 @@ public class TextEditor {
 		});
 
 		menuitem_selectfont.addActionListener(e -> {
-			fontchooser.showDialog(textarea);
-			textarea.setFont(fontchooser.getSelectedFont());
+			int dialog = fontchooser.showDialog(textarea);
+
+			if(dialog == JOptionPane.OK_OPTION) {
+				textarea.setFont(fontchooser.getSelectedFont());
+			}
 		});
 
 		textarea.getDocument().addDocumentListener(new DocumentListener() {
@@ -275,6 +283,14 @@ public class TextEditor {
 				RestoreCloseBehavior();
 			}
 		});
+
+		Toolkit.getDefaultToolkit().getSystemClipboard().addFlavorListener(new FlavorListener() { 
+			@Override 
+			public void flavorsChanged(FlavorEvent e) {
+
+				CheckButtons();
+			} 
+		}); 
 	}
 
 	private static void SetupFileChooser() {
@@ -512,10 +528,22 @@ public class TextEditor {
 			 * viene sollevata una IllegalArgumentException, che devo ignorare */
 		}
 
-		if(Toolkit.getDefaultToolkit().getSystemClipboard() != null) {
-			menuitem_paste.setEnabled(true);
-		} else {
+		String clipboardtext = "";
+
+		try {
+			clipboardtext = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
+		} catch (UnsupportedFlavorException e) {
+			//Se si è generata una UnsupportedFlavorException, la uso per capire che nella clipboard non c'è un testo
+			clipboardtext = "";
+		} catch (Exception e) {
+			//Se si è generato un qualsiasi altro tipo di eccezione, scrivo lo stack trace
+			e.printStackTrace();
+		}
+
+		if(clipboardtext.equals("")) {
 			menuitem_paste.setEnabled(false);
+		} else {
+			menuitem_paste.setEnabled(true);
 		}
 	}
 
@@ -591,7 +619,7 @@ public class TextEditor {
 			e.printStackTrace();
 		}
 	}
-	
+
 	protected static String GetString(String key) {
 		return strings.get(key);
 	}
