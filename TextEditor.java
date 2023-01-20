@@ -11,7 +11,6 @@ import java.awt.event.WindowAdapter;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
@@ -234,7 +233,7 @@ public class TextEditor {
 		menuitem_selectfont.addActionListener(e -> {
 			int dialog = fontchooser.showDialog(textarea);
 
-			if(dialog == JOptionPane.OK_OPTION) {
+			if(dialog == JFontChooser.OK_OPTION) {
 				textarea.setFont(fontchooser.getSelectedFont());
 			}
 		});
@@ -287,7 +286,6 @@ public class TextEditor {
 		Toolkit.getDefaultToolkit().getSystemClipboard().addFlavorListener(new FlavorListener() { 
 			@Override 
 			public void flavorsChanged(FlavorEvent e) {
-
 				CheckButtons();
 			} 
 		}); 
