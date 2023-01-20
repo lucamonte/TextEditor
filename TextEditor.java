@@ -22,7 +22,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class TextEditor {
 
 	private static String openfilepath = "";
-	private static JFileChooser filechooser = new JFileChooser();
+	private static JFileChooser filechooser;
 	private static String oldtext = "";
 	private static JFrame frame;
 	protected static String applicationpath = new TextEditor().getClass().getClassLoader().getResource("").getPath();
@@ -62,6 +62,9 @@ public class TextEditor {
 	private static JScrollPane scroll;
 
 	public static void Run() {
+		//Impostazione dello stile dei componenti della UI. Commentare per utilizzare lo stile di default di AWT/Swing
+		SetLookAndFeel();
+
 		//Generazione della finestra e relativi elementi
 		SetupWindow();
 
@@ -263,12 +266,13 @@ public class TextEditor {
 	}
 
 	private static void SetupFileChooser() {
+		filechooser = new JFileChooser();
 		filechooser.setAcceptAllFileFilterUsed(false);
 		filechooser.addChoosableFileFilter(new FileNameExtensionFilter(strings.get("TXT_FILE_EXTENSION_DESCRIPTION"), "txt"));
 	}
 
 	private static void SetupFrame() {
-		frame.getContentPane().add(BorderLayout.NORTH, menubar);
+		frame.getRootPane().setJMenuBar(menubar);
 		frame.getContentPane().add(BorderLayout.CENTER, scroll);
 		frame.setLocationRelativeTo(null);
 		frame.setIconImage(icon);
@@ -279,6 +283,7 @@ public class TextEditor {
 		textarea = new JTextArea();
 		scroll = new JScrollPane(textarea);
 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scroll.setBorder(null);
 		oldtext = textarea.getText();
 		textarea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 15));
 		textarea.setEditable(true);
@@ -547,5 +552,13 @@ public class TextEditor {
 
 	private static boolean CheckAsterisk() {
 		return frame.getTitle().contains("*") ? true : false;
+	}
+
+	private static void SetLookAndFeel() {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+
+		}
 	}
 }
