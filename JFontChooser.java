@@ -633,7 +633,7 @@ public class JFontChooser extends JComponent
 	{
 		Frame frame = parent instanceof Frame ? (Frame) parent
 				: (Frame) SwingUtilities.getAncestorOfClass(Frame.class, parent);
-		JDialog dialog = new JDialog(frame, fontDialog_Title, true);
+		JDialog dialog = new JDialog(frame, TextEditor.GetString("FILE_CHOOSER_TITLE"), true);
 
 		Action okAction = new DialogOKAction(dialog);
 		Action cancelAction = new DialogCancelAction(dialog);
@@ -817,14 +817,5 @@ public class JFontChooser extends JComponent
 			fontStyleNames[i++] = ("BoldItalic");
 		}
 		return fontStyleNames;
-	}
-
-	public void setFontSelectionDialogStrings(String title, String fontName, String fontStyle, String fontSize, String ok, String cancel) {
-		fontDialog_Title = title;
-		fontDialog_FontName = fontName;
-		fontDialog_FontStyle = fontStyle;
-		fontDialog_FontSize = fontSize;
-		fontDialog_OkButton = ok;
-		fontDialog_CancelButton = cancel;
 	}
 }
