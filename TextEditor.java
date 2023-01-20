@@ -24,6 +24,7 @@ public class TextEditor {
 
 	private static String openfilepath = "";
 	private static JFileChooser filechooser;
+	private static JFontChooser fontchooser;
 	private static String oldtext = "";
 	private static JFrame frame;
 	protected static String applicationpath = new TextEditor().getClass().getClassLoader().getResource("").getPath();
@@ -41,6 +42,7 @@ public class TextEditor {
 	private static JMenuItem menuitem_cut;
 	private static JMenuItem menuitem_paste;
 	private static JMenuItem menuitem_delete;
+	private static JMenuItem menuitem_selectfont;
 
 	private static JMenuBar menubar;
 
@@ -58,6 +60,7 @@ public class TextEditor {
 	private static KeyStroke shortcut_cut;
 	private static KeyStroke shortcut_paste;
 	private static KeyStroke shortcut_delete;
+	private static KeyStroke shortcut_selectfont;
 
 	private static JTextArea textarea;
 	private static JScrollPane scroll;
@@ -100,6 +103,9 @@ public class TextEditor {
 
 		//Impostazione del FileChooser
 		SetupFileChooser();
+
+		//Impostazione del FontChooser
+		SetupFontChooser();
 	}
 
 	private static void SetupBusinessLogic() {
@@ -220,6 +226,11 @@ public class TextEditor {
 			RestoreCloseBehavior();
 		});
 
+		menuitem_selectfont.addActionListener(e -> {
+			fontchooser.showDialog(textarea);
+			textarea.setFont(fontchooser.getSelectedFont());
+		});
+
 		textarea.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void removeUpdate(DocumentEvent e) {
@@ -272,6 +283,10 @@ public class TextEditor {
 		filechooser.addChoosableFileFilter(new FileNameExtensionFilter(strings.get("TXT_FILE_EXTENSION_DESCRIPTION"), "txt"));
 	}
 
+	private static void SetupFontChooser() {
+		fontchooser = new JFontChooser();
+	}
+
 	private static void SetupFrame() {
 		frame.getRootPane().setJMenuBar(menubar);
 		frame.getContentPane().add(BorderLayout.CENTER, scroll);
@@ -320,6 +335,7 @@ public class TextEditor {
 		shortcut_cut = KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK); //CTRL + X per tagliare
 		shortcut_paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK); //CTRL + V per incollare
 		shortcut_delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.CTRL_DOWN_MASK); //CTRL + DELETE per eliminare il file
+		shortcut_selectfont = KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK); //CTRL + T per personalizzare il formato del testo
 
 		SetAccelerators();
 	}
@@ -336,6 +352,7 @@ public class TextEditor {
 		menuitem_cut.setAccelerator(shortcut_cut);
 		menuitem_paste.setAccelerator(shortcut_paste);
 		menuitem_delete.setAccelerator(shortcut_delete);
+		menuitem_selectfont.setAccelerator(shortcut_selectfont);
 	}
 
 	private static void AddMenuItems() {
@@ -350,6 +367,7 @@ public class TextEditor {
 		menu_text.add(menuitem_copy);
 		menu_text.add(menuitem_cut);
 		menu_text.add(menuitem_paste);
+		menu_text.add(menuitem_selectfont);
 	}
 
 	private static void ResetTextArea() {
@@ -513,6 +531,7 @@ public class TextEditor {
 		menuitem_cut = new JMenuItem(strings.get("CUT"));
 		menuitem_paste = new JMenuItem(strings.get("PASTE"));
 		menuitem_delete = new JMenuItem(strings.get("DELETE_FILE"));
+		menuitem_selectfont = new JMenuItem("Formato");
 
 	}
 
