@@ -1,4 +1,5 @@
 package TextEditor;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -96,6 +97,13 @@ public class Config extends TextEditor {
 		strings.put("SAVE_BEFORE_EXIT", "Salvare il file prima di uscire?");
 		strings.put("DELETE_CONFIRMATION", "Eliminare il file?");
 		strings.put("TXT_FILE_EXTENSION_DESCRIPTION", "File TXT");
+		strings.put("TEXT_FORMAT", "Formato");
+		strings.put("FONT_CHOOSER_TITLE", "Carattere");
+		strings.put("FONT_CHOOSER_FONT_NAME", "Tipo di carattere");
+		strings.put("FONT_CHOOSER_FONT_STYLE", "Stile");
+		strings.put("FONT_CHOOSER_FONT_SIZE", "Dimensione");
+		strings.put("FONT_CHOOSER_OK_BUTTON", "OK");
+		strings.put("FONT_CHOOSER_CANCEL_BUTTON", "Annulla");
 
 	}
 
