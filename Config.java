@@ -104,6 +104,11 @@ public class Config extends TextEditor {
 		strings.put("FONT_CHOOSER_FONT_SIZE", "Dimensione");
 		strings.put("FONT_CHOOSER_OK_BUTTON", "OK");
 		strings.put("FONT_CHOOSER_CANCEL_BUTTON", "Annulla");
+		strings.put("FONT_CHOOSER_SAMPLE", "Esempio");
+		strings.put("FONT_CHOOSER_REGULAR", "Normale");
+		strings.put("FONT_CHOOSER_ITALIC", "Corsivo");
+		strings.put("FONT_CHOOSER_BOLD", "Grassetto");
+		strings.put("FONT_CHOOSER_BOLDITALIC", "Grassetto Corsivo");
 
 	}
 
