@@ -11,10 +11,6 @@ import java.awt.event.WindowAdapter;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Hashtable;
 import java.util.Scanner;
 import javax.swing.*;
@@ -31,7 +27,6 @@ public class TextEditor {
 	private static JFontChooser fontchooser;
 	private static String oldtext = "";
 	private static JFrame frame;
-	protected static String applicationpath = new TextEditor().getClass().getClassLoader().getResource("").getPath();
 	private static Image icon;
 	protected static Hashtable<String, String> strings = new Hashtable<String, String>();
 
@@ -569,35 +564,7 @@ public class TextEditor {
 	}
 
 	private static void SetIcon() {
-		StringBuilder stringbuilder = new StringBuilder(applicationpath + "icon.png");
-
-		/* Su Windows, nella applicationpath viene aggiunta una \ alla fine, che causa un errore con la classe File. 
-		 * Rimuovo il primo carattere della stringa (\), in modo da avere a disposizione un percorso file pulito */
-
-		if(System.getProperty("os.name").toLowerCase().contains("windows")) {
-			stringbuilder.deleteCharAt(0);
-		}
-
-		String iconpath = stringbuilder.toString();
-
-		try {
-
-			File objfile = new File(iconpath);
-
-			if(!objfile.exists()) {
-				System.out.println("File icona non trovato, download da Internet in corso...");
-
-				InputStream imagestream = new URL("https://cdn-icons-png.flaticon.com/512/579/579703.png").openStream();
-				Files.copy(imagestream, Paths.get(iconpath));
-
-				System.out.println("File icona scaricato correttamente!");
-			}
-
-			icon = Toolkit.getDefaultToolkit().getImage(iconpath);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		icon = Toolkit.getDefaultToolkit().getImage(TextEditor.class.getResource("/images/icon.png"));
 	}
 
 	private static void RestoreCloseBehavior() {
