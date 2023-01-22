@@ -319,7 +319,7 @@ public class TextEditor {
 
 	private static void CreateFrame() {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(800, 600);
+		frame.setSize(1300, 640);
 	}
 
 	private static void CreateMenu() {
@@ -574,7 +574,7 @@ public class TextEditor {
 	private static void SetLookAndFeel() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
