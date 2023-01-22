@@ -27,7 +27,7 @@ public class TextEditor {
 	private static JFontChooser fontchooser;
 	private static String oldtext = "";
 	private static JFrame frame;
-	private static Image icon;
+	private static Image icon = Toolkit.getDefaultToolkit().getImage(TextEditor.class.getResource("/images/icon.png"));;
 	protected static Hashtable<String, String> strings = new Hashtable<String, String>();
 
 	private static JMenuItem menuitem_saveas;
@@ -78,9 +78,6 @@ public class TextEditor {
 
 		//Lettura delle stringhe degli elementi dell'interfaccia
 		LoadStrings();
-
-		//Impostazione dell'icona dell'applicazione
-		SetIcon();
 
 		//Creazione del frame
 		CreateFrame();
@@ -561,10 +558,6 @@ public class TextEditor {
 		menuitem_delete = new JMenuItem(GetString("DELETE_FILE"));
 		menuitem_selectfont = new JMenuItem(GetString("TEXT_FORMAT"));
 
-	}
-
-	private static void SetIcon() {
-		icon = Toolkit.getDefaultToolkit().getImage(TextEditor.class.getResource("/images/icon.png"));
 	}
 
 	private static void RestoreCloseBehavior() {
