@@ -1,2 +1,2 @@
 # TextEditor
-A simple cross-platform TextEditor GUI written in Java
+A simple cross-platform Text Editor written in Java
