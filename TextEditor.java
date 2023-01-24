@@ -10,7 +10,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Hashtable;
 import java.util.Scanner;
 import javax.swing.*;
@@ -408,7 +410,7 @@ public class TextEditor {
 				objfile.createNewFile();
 			} 
 
-			BufferedWriter objwriter = new BufferedWriter(new FileWriter(filepath));
+			BufferedWriter objwriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filepath), StandardCharsets.UTF_8));
 
 			objwriter.write(textarea.getText());
 			objwriter.flush();
@@ -427,7 +429,7 @@ public class TextEditor {
 
 				File objfile = new File(openfilepath);
 
-				Scanner objscanner = new Scanner(objfile);
+				Scanner objscanner = new Scanner(objfile, StandardCharsets.UTF_8.name());
 
 				textarea.setText(null);
 
