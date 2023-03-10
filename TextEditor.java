@@ -6,6 +6,7 @@ import java.awt.datatransfer.FlavorEvent;
 import java.awt.datatransfer.FlavorListener;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.WindowEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.io.BufferedWriter;
@@ -29,7 +30,9 @@ public class TextEditor {
 	private static JFontChooser fontchooser;
 	private static String oldtext = "";
 	private static JFrame frame;
-	private static Image icon = Toolkit.getDefaultToolkit().getImage(TextEditor.class.getResource("/images/icon.png"));;
+	private static Image icon = Toolkit.getDefaultToolkit().getImage(TextEditor.class.getResource("/images/icon.png"));
+	private static TrayIcon trayicon;
+	private static SystemTray systemtray = SystemTray.getSystemTray();
 	protected static Hashtable<String, String> strings = new Hashtable<String, String>();
 
 	private static JMenuItem menuitem_saveas;
@@ -45,7 +48,14 @@ public class TextEditor {
 	private static JMenuItem menuitem_delete;
 	private static JMenuItem menuitem_selectfont;
 
+	private static MenuItem traymenuitem_new;
+	private static MenuItem traymenuitem_save;
+	private static MenuItem traymenuitem_saveas;
+	private static MenuItem traymenuitem_delete;
+	private static MenuItem traymenuitem_exit;
+
 	private static JMenuBar menubar;
+	private static PopupMenu traymenu;
 
 	private static JMenu menu_file;
 	private static JMenu menu_text;
@@ -104,6 +114,12 @@ public class TextEditor {
 
 		//Impostazione del FontChooser
 		SetupFontChooser();
+
+		//Creazione menu nella System Tray
+		CreateTrayMenu();
+
+		//Aggiunta degli elementi al menu della System Tray
+		AddTrayMenuItems();
 	}
 
 	private static void SetupBusinessLogic() {
@@ -188,6 +204,7 @@ public class TextEditor {
 			if(close) {
 				frame.setVisible(false); //Nascondo il frame
 				frame.dispose(); //Distruggo il frame
+				System.exit(0); //Termino il processo
 			}
 
 			RestoreCloseBehavior();
@@ -416,8 +433,11 @@ public class TextEditor {
 			objwriter.flush();
 			objwriter.close();
 
+			SystemTrayNotification(GetString("WINDOW_NAME"), GetString("SUCCESSFUL_SAVE_NOTIFICATION"), TrayIcon.MessageType.INFO);
+
 		} catch(Exception e) {
 			e.printStackTrace();
+			SystemTrayNotification(GetString("WINDOW_NAME"), GetString("SAVE_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
 		}
 	}
 
@@ -440,10 +460,13 @@ public class TextEditor {
 				oldtext = textarea.getText();
 
 				objscanner.close();
+
+				SystemTrayNotification(GetString("WINDOW_NAME"), GetString("SUCCESSFUL_OPEN_NOTIFICATION"), TrayIcon.MessageType.INFO);
 			}	
 
 		} catch(Exception e) {
 			e.printStackTrace();
+			SystemTrayNotification(GetString("WINDOW_NAME"), GetString("OPEN_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
 		}
 	}
 
@@ -457,8 +480,11 @@ public class TextEditor {
 			ResetTextArea();
 			CheckEditing(true);
 
+			SystemTrayNotification(GetString("WINDOW_NAME"), GetString("SUCCESSFUL_DELETE_NOTIFICATION"), TrayIcon.MessageType.INFO);
+
 		} catch(Exception e) {
 			e.printStackTrace();
+			SystemTrayNotification(GetString("WINDOW_NAME"), GetString("DELETE_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
 		}
 	}
 
@@ -495,8 +521,10 @@ public class TextEditor {
 	private static void CheckButtons() {
 		if(openfilepath.equals("")) {
 			menuitem_delete.setEnabled(false);
+			traymenuitem_delete.setEnabled(false);
 		} else {
 			menuitem_delete.setEnabled(true);
+			traymenuitem_delete.setEnabled(true);
 		}
 
 		if(textarea.getText().equals("")) {
@@ -559,6 +587,11 @@ public class TextEditor {
 		menuitem_paste = new JMenuItem(GetString("PASTE"));
 		menuitem_delete = new JMenuItem(GetString("DELETE_FILE"));
 		menuitem_selectfont = new JMenuItem(GetString("TEXT_FORMAT"));
+		traymenuitem_new = new MenuItem(GetString("NEW_FILE"));
+		traymenuitem_exit = new MenuItem(GetString("CLOSE_EDITOR"));
+		traymenuitem_save = new MenuItem(GetString("SAVE_FILE"));
+		traymenuitem_saveas = new MenuItem(GetString("SAVE_AS"));
+		traymenuitem_delete = new MenuItem(GetString("DELETE_FILE"));
 
 	}
 
@@ -583,5 +616,103 @@ public class TextEditor {
 
 	protected static String GetString(String key) {
 		return strings.get(key);
+	}
+
+	private static void CreateTrayMenu() {
+
+		if (SystemTray.isSupported()) {
+
+			traymenu = new PopupMenu();
+			trayicon = new TrayIcon(icon, GetString("WINDOW_NAME"), traymenu);
+			trayicon.setImageAutoSize(true);
+
+			CreateTrayActionListeners();
+
+			try {
+				systemtray.add(trayicon);
+			} catch (AWTException e) {
+				System.err.println("Unable to add TrayIcon");
+			}
+
+		}
+	}
+
+	private static void CreateTrayActionListeners() {
+		traymenuitem_new.addActionListener(e -> {
+			BringFrameToFront();
+			menuitem_new.doClick();
+		});
+
+		traymenuitem_save.addActionListener(e -> {
+			menuitem_save.doClick();
+		});
+
+		traymenuitem_saveas.addActionListener(e -> {
+			BringFrameToFront();
+			menuitem_saveas.doClick();
+		});
+
+		traymenuitem_delete.addActionListener(e -> {
+			BringFrameToFront();
+			menuitem_delete.doClick();
+		});
+
+		traymenuitem_exit.addActionListener(e -> {
+			BringFrameToFront();
+			menuitem_exit.doClick();
+		});
+	}
+
+	private static void AddTrayMenuItems() {
+		traymenu.add(traymenuitem_new);
+		traymenu.add(traymenuitem_save);
+		traymenu.add(traymenuitem_saveas);
+		traymenu.add(traymenuitem_delete);
+		traymenu.add(traymenuitem_exit);
+	}
+
+	private static void SystemTrayNotification(String title, String text, TrayIcon.MessageType type) {
+		boolean enableNotifications = GetString("ENABLE_NOTIFICATIONS").equals("true") ? true : false;
+
+		if(enableNotifications) {
+			trayicon.displayMessage(title, text, type);
+		}
+	}
+
+	private static void BringFrameToFront() {
+
+		/*
+		 * Da https://stackoverflow.com/questions/34637597/bring-jframe-window-to-the-front
+		 */
+
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				if(!frame.isVisible()) {
+					frame.setVisible(true);
+				}
+
+				frame.setExtendedState(JFrame.NORMAL);
+				frame.toFront();
+				frame.setAlwaysOnTop(true);
+
+				try {
+					final Point oldMouseLocation = MouseInfo.getPointerInfo().getLocation();
+
+					//Simula un click sulla barra del titolo
+					Robot robot = new Robot();
+					robot.mouseMove(frame.getX() + 100, frame.getY() + 10);
+					robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+					robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+
+					//Sposta il mouse alla posizione precedente
+					robot.mouseMove((int) oldMouseLocation.getX(), (int) oldMouseLocation.getY());
+				} catch(Exception ex) {
+
+				} finally {
+					frame.setAlwaysOnTop(false);
+				}
+			}
+		});
 	}
 }
