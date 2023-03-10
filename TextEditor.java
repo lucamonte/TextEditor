@@ -707,8 +707,8 @@ public class TextEditor {
 
 					//Sposta il mouse alla posizione precedente
 					robot.mouseMove((int) oldMouseLocation.getX(), (int) oldMouseLocation.getY());
-				} catch(Exception ex) {
-
+				} catch(Exception e) {
+					e.printStackTrace();
 				} finally {
 					frame.setAlwaysOnTop(false);
 				}
