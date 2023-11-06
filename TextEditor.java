@@ -410,7 +410,7 @@ public class TextEditor {
 			WriteFile(openfilepath);
 		}
 
-		CheckEditing(openfilepath.equals("") ? false : true);
+		CheckEditing(!openfilepath.equals(""));
 	}
 
 	private static void WriteFile(String filepath) {
@@ -517,7 +517,7 @@ public class TextEditor {
 
 		return result;
 	}
-
+	
 	private static void CheckButtons() {
 		if(openfilepath.equals("")) {
 			menuitem_delete.setEnabled(false);
@@ -672,7 +672,7 @@ public class TextEditor {
 	}
 
 	private static void SystemTrayNotification(String title, String text, TrayIcon.MessageType type) {
-		boolean enableNotifications = GetString("ENABLE_NOTIFICATIONS").equals("true") ? true : false;
+		boolean enableNotifications = GetString("ENABLE_NOTIFICATIONS").equals("true");
 
 		if(enableNotifications) {
 			trayicon.displayMessage(title, text, type);
