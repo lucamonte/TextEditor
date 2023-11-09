@@ -506,7 +506,6 @@ public class TextEditor {
 			frame.setTitle(frame.getTitle().replace("* ", ""));
 		}
 
-
 		CheckButtons();
 	}
 
