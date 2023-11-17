@@ -6,6 +6,7 @@ import java.awt.datatransfer.FlavorEvent;
 import java.awt.datatransfer.FlavorListener;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.WindowEvent;
+import java.awt.print.PrinterException;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -33,7 +34,7 @@ public class TextEditor {
 	private static Image icon = Toolkit.getDefaultToolkit().getImage(TextEditor.class.getResource("/images/icon.png"));
 	private static TrayIcon trayicon;
 	private static SystemTray systemtray = SystemTray.getSystemTray();
-	protected static Hashtable<String, String> strings = new Hashtable<String, String>();
+	private static Hashtable<String, String> strings = new Hashtable<String, String>();
 
 	private static JMenuItem menuitem_saveas;
 	private static JMenuItem menuitem_deleteall;
@@ -46,12 +47,15 @@ public class TextEditor {
 	private static JMenuItem menuitem_cut;
 	private static JMenuItem menuitem_paste;
 	private static JMenuItem menuitem_delete;
+	private static JMenuItem menuitem_print;
 	private static JMenuItem menuitem_selectfont;
+	private static JMenuItem menuitem_selectcolor;
 
 	private static MenuItem traymenuitem_new;
 	private static MenuItem traymenuitem_save;
 	private static MenuItem traymenuitem_saveas;
 	private static MenuItem traymenuitem_delete;
+	private static MenuItem traymenuitem_print;
 	private static MenuItem traymenuitem_exit;
 
 	private static JMenuBar menubar;
@@ -71,7 +75,9 @@ public class TextEditor {
 	private static KeyStroke shortcut_cut;
 	private static KeyStroke shortcut_paste;
 	private static KeyStroke shortcut_delete;
+	private static KeyStroke shortcut_print;
 	private static KeyStroke shortcut_selectfont;
+	private static KeyStroke shortcut_selectcolor;
 
 	private static JTextArea textarea;
 	private static JScrollPane scroll;
@@ -240,12 +246,31 @@ public class TextEditor {
 
 			RestoreCloseBehavior();
 		});
+		
+		menuitem_print.addActionListener(e -> {
+			try {
+				if(textarea.print()){
+					SystemTrayNotification(GetString("WINDOW_NAME"), GetString("SUCCESSFUL_PRINT_NOTIFICATION"), TrayIcon.MessageType.INFO);
+				}
+			} catch(PrinterException ex) {
+				ex.printStackTrace();
+				SystemTrayNotification(GetString("WINDOW_NAME"), GetString("PRINT_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
+			}
+		});
 
 		menuitem_selectfont.addActionListener(e -> {
 			int dialog = fontchooser.showDialog(textarea);
 
 			if(dialog == JFontChooser.OK_OPTION) {
 				textarea.setFont(fontchooser.getSelectedFont());
+			}
+		});
+		
+		menuitem_selectcolor.addActionListener(e -> {
+			Color new_color = JColorChooser.showDialog(textarea, GetString("COLOR_WINDOW_NAME"), textarea.getForeground());
+	
+			if(!textarea.getForeground().equals(new_color) && new_color != null) {
+				textarea.setForeground(new_color);
 			}
 		});
 
@@ -360,7 +385,9 @@ public class TextEditor {
 		shortcut_cut = KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK); //CTRL + X per tagliare
 		shortcut_paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK); //CTRL + V per incollare
 		shortcut_delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.CTRL_DOWN_MASK); //CTRL + DELETE per eliminare il file
+		shortcut_print = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK); //CTRL + P per stampare il documento
 		shortcut_selectfont = KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK); //CTRL + T per personalizzare il formato del testo
+		shortcut_selectcolor = KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK); //CTRL + L per personalizzare il colore del testo
 
 		SetAccelerators();
 	}
@@ -377,7 +404,9 @@ public class TextEditor {
 		menuitem_cut.setAccelerator(shortcut_cut);
 		menuitem_paste.setAccelerator(shortcut_paste);
 		menuitem_delete.setAccelerator(shortcut_delete);
+		menuitem_print.setAccelerator(shortcut_print);
 		menuitem_selectfont.setAccelerator(shortcut_selectfont);
+		menuitem_selectcolor.setAccelerator(shortcut_selectcolor);
 	}
 
 	private static void AddMenuItems() {
@@ -386,6 +415,7 @@ public class TextEditor {
 		menu_file.add(menuitem_save);
 		menu_file.add(menuitem_saveas);
 		menu_file.add(menuitem_delete);
+		menu_file.add(menuitem_print);
 		menu_file.add(menuitem_exit);
 		menu_text.add(menuitem_deleteall);
 		menu_text.add(menuitem_selectall);
@@ -393,6 +423,7 @@ public class TextEditor {
 		menu_text.add(menuitem_cut);
 		menu_text.add(menuitem_paste);
 		menu_text.add(menuitem_selectfont);
+		menu_text.add(menuitem_selectcolor);
 	}
 
 	private static void ResetTextArea() {
@@ -585,12 +616,15 @@ public class TextEditor {
 		menuitem_cut = new JMenuItem(GetString("CUT"));
 		menuitem_paste = new JMenuItem(GetString("PASTE"));
 		menuitem_delete = new JMenuItem(GetString("DELETE_FILE"));
+		menuitem_print = new JMenuItem(GetString("PRINT_FILE"));
 		menuitem_selectfont = new JMenuItem(GetString("TEXT_FORMAT"));
+		menuitem_selectcolor = new JMenuItem(GetString("TEXT_COLOR"));
 		traymenuitem_new = new MenuItem(GetString("NEW_FILE"));
 		traymenuitem_exit = new MenuItem(GetString("CLOSE_EDITOR"));
 		traymenuitem_save = new MenuItem(GetString("SAVE_FILE"));
 		traymenuitem_saveas = new MenuItem(GetString("SAVE_AS"));
 		traymenuitem_delete = new MenuItem(GetString("DELETE_FILE"));
+		traymenuitem_print = new MenuItem(GetString("PRINT_FILE"));
 
 	}
 
@@ -615,6 +649,10 @@ public class TextEditor {
 
 	protected static String GetString(String key) {
 		return strings.get(key);
+	}
+	
+	protected static void PutString(String key, String string) {
+		strings.put(key, string);
 	}
 
 	private static void CreateTrayMenu() {
@@ -655,6 +693,11 @@ public class TextEditor {
 			BringFrameToFront();
 			menuitem_delete.doClick();
 		});
+		
+		traymenuitem_print.addActionListener(e -> {
+			BringFrameToFront();
+			menuitem_print.doClick();
+		});
 
 		traymenuitem_exit.addActionListener(e -> {
 			BringFrameToFront();
@@ -667,6 +710,7 @@ public class TextEditor {
 		traymenu.add(traymenuitem_save);
 		traymenu.add(traymenuitem_saveas);
 		traymenu.add(traymenuitem_delete);
+		traymenu.add(traymenuitem_print);
 		traymenu.add(traymenuitem_exit);
 	}
 
