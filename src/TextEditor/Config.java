@@ -7,7 +7,7 @@ public class Config {
 
 	private final static String SEPARATOR = "="; 
 
-	protected static void Parse() {
+	protected static void parse() {
 
 		String[] splitline;
 		InputStream input = TextEditor.class.getResourceAsStream("/config/strings.txt");

@@ -600,7 +600,7 @@ public class TextEditor {
 
 	private static void loadStrings() {
 		//Lettura file di configurazione contenente le stringhe
-		Config.Parse();
+		Config.parse();
 
 		frame = new JFrame(getString("WINDOW_NAME"));
 		menu_file = new JMenu(getString("FILE_MENU"));
