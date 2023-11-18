@@ -87,7 +87,7 @@ public class TextEditor {
 		setupWindow();
 
 		//Gestione degli eventi e della logica applicativa
-		SetupBusinessLogic();
+		setupBusinessLogic();
 	}
 
 	private static void setupWindow() {
@@ -128,7 +128,7 @@ public class TextEditor {
 		addTrayMenuItems();
 	}
 
-	private static void SetupBusinessLogic() {
+	private static void setupBusinessLogic() {
 		menuitem_saveas.addActionListener(e -> {
 			openfilepath = "";
 			saveFile();
