@@ -16,7 +16,7 @@ public class Config {
 		try {
 			while(objscanner.hasNextLine()) {
 				splitline = objscanner.nextLine().split(SEPARATOR, -2);
-				TextEditor.PutString(splitline[0].trim(), splitline[1].trim());
+				TextEditor.putString(splitline[0].trim(), splitline[1].trim());
 			}
 		} catch (Exception exception) {
 			if(exception.getClass().getSimpleName().equals("FileNotFoundException")) {

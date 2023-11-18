@@ -92,60 +92,60 @@ public class TextEditor {
 
 	private static void SetupWindow() {
 		//Impostazione dello stile dei componenti della UI. Commentare per utilizzare lo stile di default di AWT/Swing
-		SetLookAndFeel();
+		setLookAndFeel();
 
 		//Lettura delle stringhe degli elementi dell'interfaccia
-		LoadStrings();
+		loadStrings();
 
 		//Creazione del frame
-		CreateFrame();
+		createFrame();
 
 		//Creazione del menu ed aggiunta degli elementi
-		CreateMenu();
+		createMenu();
 
 		//Creazione delle scorciatoie da tastiera
-		CreateKeyStrokes();
+		createKeyStrokes();
 
 		//Aggiunta degli elementi ai menù
-		AddMenuItems();
+		addMenuItems();
 
 		//Creazione area di testo
-		CreateTextArea();
+		createTextArea();
 
 		//Aggiunta dei componenti al frame
-		SetupFrame();
+		setupFrame();
 
 		//Impostazione del FileChooser
-		SetupFileChooser();
+		setupFileChooser();
 
 		//Impostazione del FontChooser
-		SetupFontChooser();
+		setupFontChooser();
 
 		//Creazione menu nella System Tray
-		CreateTrayMenu();
+		createTrayMenu();
 
 		//Aggiunta degli elementi al menu della System Tray
-		AddTrayMenuItems();
+		addTrayMenuItems();
 	}
 
 	private static void SetupBusinessLogic() {
 		menuitem_saveas.addActionListener(e -> {
 			openfilepath = "";
-			SaveFile();
+			saveFile();
 		});
 
 		menuitem_deleteall.addActionListener(e -> {
-			ResetTextArea();
+			resetTextArea();
 		});	
 
 		menuitem_open.addActionListener(e -> {
 			boolean openfile = true;
 
-			if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && CheckAsterisk())) {
-				int dialog = ShowDialog(GetString("WARNING"), GetString("SAVE_BEFORE_CONTINUE"));
+			if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && checkAsterisk())) {
+				int dialog = showDialog(getString("WARNING"), getString("SAVE_BEFORE_CONTINUE"));
 
 				if(dialog == JOptionPane.YES_OPTION) {
-					SaveFile();
+					saveFile();
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				} else if (dialog == JOptionPane.CLOSED_OPTION) {
 					openfile = false;
@@ -156,24 +156,24 @@ public class TextEditor {
 			}
 
 			if(openfile) {
-				OpenFile();
+				openFile();
 			}
 
-			RestoreCloseBehavior();
+			restoreCloseBehaviour();
 		});
 
 		menuitem_save.addActionListener(e -> {
-			SaveFile();
+			saveFile();
 		});
 
 		menuitem_new.addActionListener(e -> {
 			boolean newdoc = true;
 
-			if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && CheckAsterisk())) {
-				int dialog = ShowDialog(GetString("WARNING"), GetString("SAVE_BEFORE_CONTINUE"));
+			if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && checkAsterisk())) {
+				int dialog = showDialog(getString("WARNING"), getString("SAVE_BEFORE_CONTINUE"));
 
 				if(dialog == JOptionPane.YES_OPTION) {
-					SaveFile();
+					saveFile();
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				} else if (dialog == JOptionPane.CLOSED_OPTION) {
 					frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -184,20 +184,20 @@ public class TextEditor {
 			}
 
 			if(newdoc) {
-				NewDocument();
+				newDocument();
 			}
 
-			RestoreCloseBehavior();
+			restoreCloseBehaviour();
 		});
 
 		menuitem_exit.addActionListener(e -> {
 			boolean close = true;
 
-			if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && CheckAsterisk())) {
-				int dialog = ShowDialog(GetString("WARNING"), GetString("SAVE_BEFORE_EXIT"));
+			if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && checkAsterisk())) {
+				int dialog = showDialog(getString("WARNING"), getString("SAVE_BEFORE_EXIT"));
 
 				if(dialog == JOptionPane.YES_OPTION) {
-					SaveFile();
+					saveFile();
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				} else if (dialog == JOptionPane.CLOSED_OPTION) {
 					close = false;
@@ -213,7 +213,7 @@ public class TextEditor {
 				System.exit(0); //Termino il processo
 			}
 
-			RestoreCloseBehavior();
+			restoreCloseBehaviour();
 		});
 
 		menuitem_selectall.addActionListener(e -> {
@@ -233,10 +233,10 @@ public class TextEditor {
 		});
 
 		menuitem_delete.addActionListener(e -> {
-			int dialog = ShowDialog(GetString("WARNING"), GetString("DELETE_CONFIRMATION"));
+			int dialog = showDialog(getString("WARNING"), getString("DELETE_CONFIRMATION"));
 
 			if(dialog == JOptionPane.YES_OPTION) {
-				DeleteFile();
+				deleteFile();
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			} else if (dialog == JOptionPane.CLOSED_OPTION) {
 				frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -244,17 +244,17 @@ public class TextEditor {
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			}
 
-			RestoreCloseBehavior();
+			restoreCloseBehaviour();
 		});
 		
 		menuitem_print.addActionListener(e -> {
 			try {
 				if(textarea.print()){
-					SystemTrayNotification(GetString("WINDOW_NAME"), GetString("SUCCESSFUL_PRINT_NOTIFICATION"), TrayIcon.MessageType.INFO);
+					sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SUCCESSFUL_PRINT_NOTIFICATION"), TrayIcon.MessageType.INFO);
 				}
 			} catch(PrinterException ex) {
 				ex.printStackTrace();
-				SystemTrayNotification(GetString("WINDOW_NAME"), GetString("PRINT_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
+				sendSystemTrayNotification(getString("WINDOW_NAME"), getString("PRINT_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
 			}
 		});
 
@@ -267,7 +267,7 @@ public class TextEditor {
 		});
 		
 		menuitem_selectcolor.addActionListener(e -> {
-			Color new_color = JColorChooser.showDialog(textarea, GetString("COLOR_WINDOW_NAME"), textarea.getForeground());
+			Color new_color = JColorChooser.showDialog(textarea, getString("COLOR_WINDOW_NAME"), textarea.getForeground());
 	
 			if(!textarea.getForeground().equals(new_color) && new_color != null) {
 				textarea.setForeground(new_color);
@@ -277,36 +277,36 @@ public class TextEditor {
 		textarea.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				CheckEditing();
+				checkEditing();
 			}
 
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				CheckEditing();
+				checkEditing();
 			}
 
 			@Override
 			public void changedUpdate(DocumentEvent arg0) {
-				CheckEditing();
+				checkEditing();
 			}
 		});
 
 		textarea.addCaretListener(new CaretListener() {
 			@Override
 			public void caretUpdate(CaretEvent e) {
-				CheckButtons();
+				checkButtons();
 			}
 		});
 
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent windowEvent) {
-				if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && CheckAsterisk())) {
+				if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && checkAsterisk())) {
 
-					int dialog = ShowDialog(GetString("WARNING"), GetString("SAVE_BEFORE_EXIT"));
+					int dialog = showDialog(getString("WARNING"), getString("SAVE_BEFORE_EXIT"));
 
 					if(dialog == JOptionPane.YES_OPTION) {
-						SaveFile();
+						saveFile();
 						frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 					} else if (dialog == JOptionPane.CLOSED_OPTION) {
 						frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -315,29 +315,29 @@ public class TextEditor {
 					}
 				}
 
-				RestoreCloseBehavior();
+				restoreCloseBehaviour();
 			}
 		});
 
 		Toolkit.getDefaultToolkit().getSystemClipboard().addFlavorListener(new FlavorListener() { 
 			@Override 
 			public void flavorsChanged(FlavorEvent e) {
-				CheckButtons();
+				checkButtons();
 			} 
 		}); 
 	}
 
-	private static void SetupFileChooser() {
+	private static void setupFileChooser() {
 		filechooser = new JFileChooser();
 		filechooser.setAcceptAllFileFilterUsed(false);
-		filechooser.addChoosableFileFilter(new FileNameExtensionFilter(GetString("TXT_FILE_EXTENSION_DESCRIPTION"), "txt"));
+		filechooser.addChoosableFileFilter(new FileNameExtensionFilter(getString("TXT_FILE_EXTENSION_DESCRIPTION"), "txt"));
 	}
 
-	private static void SetupFontChooser() {
+	private static void setupFontChooser() {
 		fontchooser = new JFontChooser();
 	}
 
-	private static void SetupFrame() {
+	private static void setupFrame() {
 		frame.getRootPane().setJMenuBar(menubar);
 		frame.getContentPane().add(BorderLayout.CENTER, scroll);
 		frame.setLocationRelativeTo(null);
@@ -345,7 +345,7 @@ public class TextEditor {
 		frame.setVisible(true);
 	}
 
-	private static void CreateTextArea() {
+	private static void createTextArea() {
 		textarea = new JTextArea();
 		scroll = new JScrollPane(textarea);
 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -358,22 +358,22 @@ public class TextEditor {
 		textarea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 15));
 		textarea.setEditable(true);
 
-		CheckButtons();
+		checkButtons();
 	}
 
-	private static void CreateFrame() {
+	private static void createFrame() {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(1300, 640);
 	}
 
-	private static void CreateMenu() {
+	private static void createMenu() {
 		menubar = new JMenuBar();
 
 		menubar.add(menu_file);
 		menubar.add(menu_text);
 	}
 
-	private static void CreateKeyStrokes() {
+	private static void createKeyStrokes() {
 		shortcut_save = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK); //CTRL + S per salvare
 		shortcut_new = KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK); //CTRL + N per creare un nuovo documento
 		shortcut_open = KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK); //CTRL + O per aprire un documento
@@ -389,10 +389,10 @@ public class TextEditor {
 		shortcut_selectfont = KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK); //CTRL + T per personalizzare il formato del testo
 		shortcut_selectcolor = KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK); //CTRL + L per personalizzare il colore del testo
 
-		SetAccelerators();
+		setAccelerators();
 	}
 
-	private static void SetAccelerators() {
+	private static void setAccelerators() {
 		menuitem_saveas.setAccelerator(shortcut_saveas);
 		menuitem_deleteall.setAccelerator(shortcut_deleteall);
 		menuitem_open.setAccelerator(shortcut_open);
@@ -409,7 +409,7 @@ public class TextEditor {
 		menuitem_selectcolor.setAccelerator(shortcut_selectcolor);
 	}
 
-	private static void AddMenuItems() {
+	private static void addMenuItems() {
 		menu_file.add(menuitem_new);
 		menu_file.add(menuitem_open);
 		menu_file.add(menuitem_save);
@@ -426,25 +426,25 @@ public class TextEditor {
 		menu_text.add(menuitem_selectcolor);
 	}
 
-	private static void ResetTextArea() {
+	private static void resetTextArea() {
 		textarea.setText(null);
 	}
 
-	private static void SaveFile() {
+	private static void saveFile() {
 
 		if(openfilepath.equals("")) {
 			if(filechooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
 				openfilepath = filechooser.getSelectedFile().toString();
-				WriteFile(openfilepath);
+				writeFile(openfilepath);
 			}
 		} else {
-			WriteFile(openfilepath);
+			writeFile(openfilepath);
 		}
 
-		CheckEditing(!openfilepath.equals(""));
+		checkEditing(!openfilepath.equals(""));
 	}
 
-	private static void WriteFile(String filepath) {
+	private static void writeFile(String filepath) {
 
 		if(!filepath.contains(".txt")) {
 			filepath += ".txt";
@@ -464,15 +464,15 @@ public class TextEditor {
 			objwriter.flush();
 			objwriter.close();
 
-			SystemTrayNotification(GetString("WINDOW_NAME"), GetString("SUCCESSFUL_SAVE_NOTIFICATION"), TrayIcon.MessageType.INFO);
+			sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SUCCESSFUL_SAVE_NOTIFICATION"), TrayIcon.MessageType.INFO);
 
 		} catch(Exception e) {
 			e.printStackTrace();
-			SystemTrayNotification(GetString("WINDOW_NAME"), GetString("SAVE_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
+			sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SAVE_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
 		}
 	}
 
-	private static void OpenFile() {
+	private static void openFile() {
 		try {
 
 			if(filechooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {	
@@ -492,44 +492,44 @@ public class TextEditor {
 
 				objscanner.close();
 
-				SystemTrayNotification(GetString("WINDOW_NAME"), GetString("SUCCESSFUL_OPEN_NOTIFICATION"), TrayIcon.MessageType.INFO);
+				sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SUCCESSFUL_OPEN_NOTIFICATION"), TrayIcon.MessageType.INFO);
 			}	
 
 		} catch(Exception e) {
 			e.printStackTrace();
-			SystemTrayNotification(GetString("WINDOW_NAME"), GetString("OPEN_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
+			sendSystemTrayNotification(getString("WINDOW_NAME"), getString("OPEN_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
 		}
 	}
 
-	private static void DeleteFile() {
+	private static void deleteFile() {
 		try {
 
 			File objfile = new File(openfilepath);
 			objfile.delete();
 			openfilepath = "";
 
-			ResetTextArea();
-			CheckEditing(true);
+			resetTextArea();
+			checkEditing(true);
 
-			SystemTrayNotification(GetString("WINDOW_NAME"), GetString("SUCCESSFUL_DELETE_NOTIFICATION"), TrayIcon.MessageType.INFO);
+			sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SUCCESSFUL_DELETE_NOTIFICATION"), TrayIcon.MessageType.INFO);
 
 		} catch(Exception e) {
 			e.printStackTrace();
-			SystemTrayNotification(GetString("WINDOW_NAME"), GetString("DELETE_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
+			sendSystemTrayNotification(getString("WINDOW_NAME"), getString("DELETE_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
 		}
 	}
 
-	private static void NewDocument() {
-		ResetTextArea();
+	private static void newDocument() {
+		resetTextArea();
 		openfilepath = "";
 	}
 
-	private static void CheckEditing() {
-		CheckEditing(false);
+	private static void checkEditing() {
+		checkEditing(false);
 	}
 
-	private static void CheckEditing(boolean saved) {
-		if(!oldtext.equals(textarea.getText()) && !CheckAsterisk()) {
+	private static void checkEditing(boolean saved) {
+		if(!oldtext.equals(textarea.getText()) && !checkAsterisk()) {
 			frame.setTitle("* " + frame.getTitle());
 		}
 
@@ -537,10 +537,10 @@ public class TextEditor {
 			frame.setTitle(frame.getTitle().replace("* ", ""));
 		}
 
-		CheckButtons();
+		checkButtons();
 	}
 
-	private static int ShowDialog(String title, String text) {
+	private static int showDialog(String title, String text) {
 		int result = JOptionPane.showConfirmDialog(frame, text, title,
 				JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE);
@@ -548,7 +548,7 @@ public class TextEditor {
 		return result;
 	}
 	
-	private static void CheckButtons() {
+	private static void checkButtons() {
 		if(openfilepath.equals("")) {
 			menuitem_delete.setEnabled(false);
 			traymenuitem_delete.setEnabled(false);
@@ -598,48 +598,48 @@ public class TextEditor {
 		}
 	}
 
-	private static void LoadStrings() {
+	private static void loadStrings() {
 		//Lettura file di configurazione contenente le stringhe
 		Config.Parse();
 
-		frame = new JFrame(GetString("WINDOW_NAME"));
-		menu_file = new JMenu(GetString("FILE_MENU"));
-		menu_text = new JMenu(GetString("TEXT_MENU"));
-		menuitem_saveas = new JMenuItem(GetString("SAVE_AS"));
-		menuitem_deleteall = new JMenuItem(GetString("DELETE_ALL"));
-		menuitem_open = new JMenuItem(GetString("OPEN_FILE"));
-		menuitem_save = new JMenuItem(GetString("SAVE_FILE"));
-		menuitem_new = new JMenuItem(GetString("NEW_FILE"));
-		menuitem_exit = new JMenuItem(GetString("CLOSE_EDITOR"));
-		menuitem_selectall = new JMenuItem(GetString("SELECT_ALL"));
-		menuitem_copy = new JMenuItem(GetString("COPY"));
-		menuitem_cut = new JMenuItem(GetString("CUT"));
-		menuitem_paste = new JMenuItem(GetString("PASTE"));
-		menuitem_delete = new JMenuItem(GetString("DELETE_FILE"));
-		menuitem_print = new JMenuItem(GetString("PRINT_FILE"));
-		menuitem_selectfont = new JMenuItem(GetString("TEXT_FORMAT"));
-		menuitem_selectcolor = new JMenuItem(GetString("TEXT_COLOR"));
-		traymenuitem_new = new MenuItem(GetString("NEW_FILE"));
-		traymenuitem_exit = new MenuItem(GetString("CLOSE_EDITOR"));
-		traymenuitem_save = new MenuItem(GetString("SAVE_FILE"));
-		traymenuitem_saveas = new MenuItem(GetString("SAVE_AS"));
-		traymenuitem_delete = new MenuItem(GetString("DELETE_FILE"));
-		traymenuitem_print = new MenuItem(GetString("PRINT_FILE"));
+		frame = new JFrame(getString("WINDOW_NAME"));
+		menu_file = new JMenu(getString("FILE_MENU"));
+		menu_text = new JMenu(getString("TEXT_MENU"));
+		menuitem_saveas = new JMenuItem(getString("SAVE_AS"));
+		menuitem_deleteall = new JMenuItem(getString("DELETE_ALL"));
+		menuitem_open = new JMenuItem(getString("OPEN_FILE"));
+		menuitem_save = new JMenuItem(getString("SAVE_FILE"));
+		menuitem_new = new JMenuItem(getString("NEW_FILE"));
+		menuitem_exit = new JMenuItem(getString("CLOSE_EDITOR"));
+		menuitem_selectall = new JMenuItem(getString("SELECT_ALL"));
+		menuitem_copy = new JMenuItem(getString("COPY"));
+		menuitem_cut = new JMenuItem(getString("CUT"));
+		menuitem_paste = new JMenuItem(getString("PASTE"));
+		menuitem_delete = new JMenuItem(getString("DELETE_FILE"));
+		menuitem_print = new JMenuItem(getString("PRINT_FILE"));
+		menuitem_selectfont = new JMenuItem(getString("TEXT_FORMAT"));
+		menuitem_selectcolor = new JMenuItem(getString("TEXT_COLOR"));
+		traymenuitem_new = new MenuItem(getString("NEW_FILE"));
+		traymenuitem_exit = new MenuItem(getString("CLOSE_EDITOR"));
+		traymenuitem_save = new MenuItem(getString("SAVE_FILE"));
+		traymenuitem_saveas = new MenuItem(getString("SAVE_AS"));
+		traymenuitem_delete = new MenuItem(getString("DELETE_FILE"));
+		traymenuitem_print = new MenuItem(getString("PRINT_FILE"));
 
 	}
 
-	private static void RestoreCloseBehavior() {
+	private static void restoreCloseBehaviour() {
 		//Se non ci sono più eventi in coda, ripristino il comportamento predefinito dell'evento di chiusura della finestra
 		if(Toolkit.getDefaultToolkit().getSystemEventQueue().peekEvent() == null) {
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		}
 	}
 
-	private static boolean CheckAsterisk() {
-		return frame.getTitle().contains("*") ? true : false;
+	private static boolean checkAsterisk() {
+		return frame.getTitle().contains("*");
 	}
 
-	private static void SetLookAndFeel() {
+	private static void setLookAndFeel() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch(Exception e) {
@@ -647,23 +647,23 @@ public class TextEditor {
 		}
 	}
 
-	protected static String GetString(String key) {
+	protected static String getString(String key) {
 		return strings.get(key);
 	}
 	
-	protected static void PutString(String key, String string) {
+	protected static void putString(String key, String string) {
 		strings.put(key, string);
 	}
 
-	private static void CreateTrayMenu() {
+	private static void createTrayMenu() {
 
 		if (SystemTray.isSupported()) {
 
 			traymenu = new PopupMenu();
-			trayicon = new TrayIcon(icon, GetString("WINDOW_NAME"), traymenu);
+			trayicon = new TrayIcon(icon, getString("WINDOW_NAME"), traymenu);
 			trayicon.setImageAutoSize(true);
 
-			CreateTrayActionListeners();
+			createTrayActionListeners();
 
 			try {
 				systemtray.add(trayicon);
@@ -674,9 +674,9 @@ public class TextEditor {
 		}
 	}
 
-	private static void CreateTrayActionListeners() {
+	private static void createTrayActionListeners() {
 		traymenuitem_new.addActionListener(e -> {
-			BringFrameToFront();
+			bringFrameToFront();
 			menuitem_new.doClick();
 		});
 
@@ -685,27 +685,27 @@ public class TextEditor {
 		});
 
 		traymenuitem_saveas.addActionListener(e -> {
-			BringFrameToFront();
+			bringFrameToFront();
 			menuitem_saveas.doClick();
 		});
 
 		traymenuitem_delete.addActionListener(e -> {
-			BringFrameToFront();
+			bringFrameToFront();
 			menuitem_delete.doClick();
 		});
 		
 		traymenuitem_print.addActionListener(e -> {
-			BringFrameToFront();
+			bringFrameToFront();
 			menuitem_print.doClick();
 		});
 
 		traymenuitem_exit.addActionListener(e -> {
-			BringFrameToFront();
+			bringFrameToFront();
 			menuitem_exit.doClick();
 		});
 	}
 
-	private static void AddTrayMenuItems() {
+	private static void addTrayMenuItems() {
 		traymenu.add(traymenuitem_new);
 		traymenu.add(traymenuitem_save);
 		traymenu.add(traymenuitem_saveas);
@@ -714,15 +714,13 @@ public class TextEditor {
 		traymenu.add(traymenuitem_exit);
 	}
 
-	private static void SystemTrayNotification(String title, String text, TrayIcon.MessageType type) {
-		boolean enableNotifications = GetString("ENABLE_NOTIFICATIONS").equals("true");
-
-		if(enableNotifications) {
+	private static void sendSystemTrayNotification(String title, String text, TrayIcon.MessageType type) {
+		if(getString("ENABLE_NOTIFICATIONS").equals("true")) {
 			trayicon.displayMessage(title, text, type);
 		}
 	}
 
-	private static void BringFrameToFront() {
+	private static void bringFrameToFront() {
 
 		/*
 		 * Da https://stackoverflow.com/questions/34637597/bring-jframe-window-to-the-front
