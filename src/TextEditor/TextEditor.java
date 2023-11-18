@@ -84,13 +84,13 @@ public class TextEditor {
 
 	public static void Run() {
 		//Generazione della finestra e relativi elementi
-		SetupWindow();
+		setupWindow();
 
 		//Gestione degli eventi e della logica applicativa
 		SetupBusinessLogic();
 	}
 
-	private static void SetupWindow() {
+	private static void setupWindow() {
 		//Impostazione dello stile dei componenti della UI. Commentare per utilizzare lo stile di default di AWT/Swing
 		setLookAndFeel();
 
