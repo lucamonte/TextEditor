@@ -82,7 +82,7 @@ public class TextEditor {
 	private static JTextArea textarea;
 	private static JScrollPane scroll;
 
-	public static void Run() {
+	public static void run() {
 		//Generazione della finestra e relativi elementi
 		setupWindow();
 
