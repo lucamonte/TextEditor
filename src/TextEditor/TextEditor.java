@@ -210,9 +210,7 @@ public class TextEditor {
 			}
 
 			if(close) {
-				frame.setVisible(false); //Nascondo il frame
-				frame.dispose(); //Distruggo il frame
-				System.exit(0); //Termino il processo
+				exit();
 			}
 
 			restoreCloseBehaviour();
@@ -248,7 +246,7 @@ public class TextEditor {
 
 			restoreCloseBehaviour();
 		});
-		
+
 		menuitem_print.addActionListener(e -> {
 			try {
 				if(textarea.print()){
@@ -267,10 +265,10 @@ public class TextEditor {
 				textarea.setFont(fontchooser.getSelectedFont());
 			}
 		});
-		
+
 		menuitem_selectcolor.addActionListener(e -> {
 			Color new_color = JColorChooser.showDialog(textarea, getString("COLOR_WINDOW_NAME"), textarea.getForeground());
-	
+
 			if(!textarea.getForeground().equals(new_color) && new_color != null) {
 				textarea.setForeground(new_color);
 			}
@@ -549,7 +547,11 @@ public class TextEditor {
 
 		return result;
 	}
-	
+
+	public static void showMissingTranslationsError(String title, String text) {
+		JOptionPane.showMessageDialog(frame, text, title, JOptionPane.ERROR_MESSAGE);
+	}
+
 	private static void checkButtons() {
 		if(openfilepath.equals("")) {
 			menuitem_delete.setEnabled(false);
@@ -602,32 +604,33 @@ public class TextEditor {
 
 	private static void loadStrings() {
 		//Lettura file di configurazione contenente le stringhe
-		ConfigurationParser.parse();
+		if(ConfigurationParser.parse()) {
 
-		frame = new JFrame(getString("WINDOW_NAME"));
-		menu_file = new JMenu(getString("FILE_MENU"));
-		menu_text = new JMenu(getString("TEXT_MENU"));
-		menuitem_saveas = new JMenuItem(getString("SAVE_AS"));
-		menuitem_deleteall = new JMenuItem(getString("DELETE_ALL"));
-		menuitem_open = new JMenuItem(getString("OPEN_FILE"));
-		menuitem_save = new JMenuItem(getString("SAVE_FILE"));
-		menuitem_new = new JMenuItem(getString("NEW_FILE"));
-		menuitem_exit = new JMenuItem(getString("CLOSE_EDITOR"));
-		menuitem_selectall = new JMenuItem(getString("SELECT_ALL"));
-		menuitem_copy = new JMenuItem(getString("COPY"));
-		menuitem_cut = new JMenuItem(getString("CUT"));
-		menuitem_paste = new JMenuItem(getString("PASTE"));
-		menuitem_delete = new JMenuItem(getString("DELETE_FILE"));
-		menuitem_print = new JMenuItem(getString("PRINT_FILE"));
-		menuitem_selectfont = new JMenuItem(getString("TEXT_FORMAT"));
-		menuitem_selectcolor = new JMenuItem(getString("TEXT_COLOR"));
-		traymenuitem_new = new MenuItem(getString("NEW_FILE"));
-		traymenuitem_exit = new MenuItem(getString("CLOSE_EDITOR"));
-		traymenuitem_save = new MenuItem(getString("SAVE_FILE"));
-		traymenuitem_saveas = new MenuItem(getString("SAVE_AS"));
-		traymenuitem_delete = new MenuItem(getString("DELETE_FILE"));
-		traymenuitem_print = new MenuItem(getString("PRINT_FILE"));
+			frame = new JFrame(getString("WINDOW_NAME"));
+			menu_file = new JMenu(getString("FILE_MENU"));
+			menu_text = new JMenu(getString("TEXT_MENU"));
+			menuitem_saveas = new JMenuItem(getString("SAVE_AS"));
+			menuitem_deleteall = new JMenuItem(getString("DELETE_ALL"));
+			menuitem_open = new JMenuItem(getString("OPEN_FILE"));
+			menuitem_save = new JMenuItem(getString("SAVE_FILE"));
+			menuitem_new = new JMenuItem(getString("NEW_FILE"));
+			menuitem_exit = new JMenuItem(getString("CLOSE_EDITOR"));
+			menuitem_selectall = new JMenuItem(getString("SELECT_ALL"));
+			menuitem_copy = new JMenuItem(getString("COPY"));
+			menuitem_cut = new JMenuItem(getString("CUT"));
+			menuitem_paste = new JMenuItem(getString("PASTE"));
+			menuitem_delete = new JMenuItem(getString("DELETE_FILE"));
+			menuitem_print = new JMenuItem(getString("PRINT_FILE"));
+			menuitem_selectfont = new JMenuItem(getString("TEXT_FORMAT"));
+			menuitem_selectcolor = new JMenuItem(getString("TEXT_COLOR"));
+			traymenuitem_new = new MenuItem(getString("NEW_FILE"));
+			traymenuitem_exit = new MenuItem(getString("CLOSE_EDITOR"));
+			traymenuitem_save = new MenuItem(getString("SAVE_FILE"));
+			traymenuitem_saveas = new MenuItem(getString("SAVE_AS"));
+			traymenuitem_delete = new MenuItem(getString("DELETE_FILE"));
+			traymenuitem_print = new MenuItem(getString("PRINT_FILE"));
 
+		} else exit();
 	}
 
 	private static void restoreCloseBehaviour() {
@@ -652,7 +655,7 @@ public class TextEditor {
 	public static String getString(String key) {
 		return strings.get(key);
 	}
-	
+
 	public static void putString(String key, String string) {
 		strings.put(key, string);
 	}
@@ -695,7 +698,7 @@ public class TextEditor {
 			bringFrameToFront();
 			menuitem_delete.doClick();
 		});
-		
+
 		traymenuitem_print.addActionListener(e -> {
 			bringFrameToFront();
 			menuitem_print.doClick();
@@ -757,5 +760,13 @@ public class TextEditor {
 				}
 			}
 		});
+	}
+
+	private static void exit() {
+		if(frame != null) {
+			frame.setVisible(false); //Nascondo il frame
+			frame.dispose(); //Distruggo il frame
+		}
+		System.exit(0); //Termino il processo
 	}
 }
