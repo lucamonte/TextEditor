@@ -23,6 +23,8 @@ import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import TextEditor.Config.ConfigurationParser;
+import TextEditor.CustomDialogs.JFontChooser;
 
 public class TextEditor {
 
@@ -600,7 +602,7 @@ public class TextEditor {
 
 	private static void loadStrings() {
 		//Lettura file di configurazione contenente le stringhe
-		Config.parse();
+		ConfigurationParser.parse();
 
 		frame = new JFrame(getString("WINDOW_NAME"));
 		menu_file = new JMenu(getString("FILE_MENU"));
@@ -647,11 +649,11 @@ public class TextEditor {
 		}
 	}
 
-	protected static String getString(String key) {
+	public static String getString(String key) {
 		return strings.get(key);
 	}
 	
-	protected static void putString(String key, String string) {
+	public static void putString(String key, String string) {
 		strings.put(key, string);
 	}
 

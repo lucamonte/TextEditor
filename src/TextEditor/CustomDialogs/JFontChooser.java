@@ -1,7 +1,7 @@
 /************************************************************
  * Copyright 2004-2005,2007-2008 Masahiko SAWAI All Rights Reserved. 
  ************************************************************/
-package TextEditor;
+package TextEditor.CustomDialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -43,6 +43,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
+import TextEditor.TextEditor;
 
 /**
  * The<code>JFontChooser</code> class is a swing component 

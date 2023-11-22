@@ -1,13 +1,15 @@
-package TextEditor;
+package TextEditor.Config;
 
 import java.io.InputStream;
 import java.util.Scanner;
 
-public class Config {
+import TextEditor.TextEditor;
+
+public class ConfigurationParser {
 
 	private final static String SEPARATOR = "="; 
 
-	protected static void parse() {
+	public static void parse() {
 
 		String[] splitline;
 		InputStream input = TextEditor.class.getResourceAsStream("/config/strings.txt");
