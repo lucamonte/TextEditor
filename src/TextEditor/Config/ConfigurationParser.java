@@ -57,7 +57,7 @@ public class ConfigurationParser {
 			String url = "https://github.com/lucamonte/TextEditor/issues";
 
 			setLabel("<html>An unexpected error has occurred while initializing the application.<br/><br/>" +
-					"Stack trace of the error: " + System.lineSeparator() + stringWriter.toString().replace(System.lineSeparator(), "<br/>") + "<br/>" + 
+					"Stack trace of the error: <br/>" + stringWriter.toString().replace(System.lineSeparator(), "<br/>") + "<br/>" + 
 					"Please, report this on <a href=\"" + url + "\">GitHub</a></html>", url);
 
 			TextEditor.showErrorDialog("Generic error", errorLabel);
