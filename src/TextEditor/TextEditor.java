@@ -144,7 +144,7 @@ public class TextEditor {
 			boolean openfile = true;
 
 			if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && checkAsterisk())) {
-				int dialog = showDialog(getString("WARNING"), getString("SAVE_BEFORE_CONTINUE"));
+				int dialog = showConfirmDialog(getString("WARNING"), getString("SAVE_BEFORE_CONTINUE"));
 
 				if(dialog == JOptionPane.YES_OPTION) {
 					saveFile();
@@ -172,7 +172,7 @@ public class TextEditor {
 			boolean newdoc = true;
 
 			if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && checkAsterisk())) {
-				int dialog = showDialog(getString("WARNING"), getString("SAVE_BEFORE_CONTINUE"));
+				int dialog = showConfirmDialog(getString("WARNING"), getString("SAVE_BEFORE_CONTINUE"));
 
 				if(dialog == JOptionPane.YES_OPTION) {
 					saveFile();
@@ -196,7 +196,7 @@ public class TextEditor {
 			boolean close = true;
 
 			if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && checkAsterisk())) {
-				int dialog = showDialog(getString("WARNING"), getString("SAVE_BEFORE_EXIT"));
+				int dialog = showConfirmDialog(getString("WARNING"), getString("SAVE_BEFORE_EXIT"));
 
 				if(dialog == JOptionPane.YES_OPTION) {
 					saveFile();
@@ -233,7 +233,7 @@ public class TextEditor {
 		});
 
 		menuitem_delete.addActionListener(e -> {
-			int dialog = showDialog(getString("WARNING"), getString("DELETE_CONFIRMATION"));
+			int dialog = showConfirmDialog(getString("WARNING"), getString("DELETE_CONFIRMATION"));
 
 			if(dialog == JOptionPane.YES_OPTION) {
 				deleteFile();
@@ -303,7 +303,7 @@ public class TextEditor {
 			public void windowClosing(WindowEvent windowEvent) {
 				if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && checkAsterisk())) {
 
-					int dialog = showDialog(getString("WARNING"), getString("SAVE_BEFORE_EXIT"));
+					int dialog = showConfirmDialog(getString("WARNING"), getString("SAVE_BEFORE_EXIT"));
 
 					if(dialog == JOptionPane.YES_OPTION) {
 						saveFile();
@@ -540,7 +540,7 @@ public class TextEditor {
 		checkButtons();
 	}
 
-	private static int showDialog(String title, String text) {
+	private static int showConfirmDialog(String title, String text) {
 		int result = JOptionPane.showConfirmDialog(frame, text, title,
 				JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE);
@@ -548,8 +548,8 @@ public class TextEditor {
 		return result;
 	}
 
-	public static void showMissingTranslationsError(String title, String text) {
-		JOptionPane.showMessageDialog(frame, text, title, JOptionPane.ERROR_MESSAGE);
+	public static void showErrorDialog(String title, JLabel label) {
+		JOptionPane.showMessageDialog(frame, label, title, JOptionPane.ERROR_MESSAGE);
 	}
 
 	private static void checkButtons() {
