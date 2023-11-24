@@ -22,12 +22,12 @@ public class ConfigurationParser {
 	public static boolean parse() {
 
 		String[] splitLine;
-		String filePrefix = "/config/strings_";
-		String systemLanguage = System.getProperty("user.language");
-		String fallbackLanguage = "en";
-		String fileExtension = ".txt";
-		String localLanguageFileName = filePrefix + systemLanguage + fileExtension;
-		String fallbackLanguageFileName = filePrefix + fallbackLanguage + fileExtension;
+		final String filePrefix = "/config/strings_";
+		final String systemLanguage = System.getProperty("user.language");
+		final String fallbackLanguage = "en";
+		final String fileExtension = ".txt";
+		final String localLanguageFileName = filePrefix + systemLanguage + fileExtension;
+		final String fallbackLanguageFileName = filePrefix + fallbackLanguage + fileExtension;
 		Scanner objscanner = null;
 
 		InputStream input = TextEditor.class.getResourceAsStream(localLanguageFileName);
@@ -41,7 +41,7 @@ public class ConfigurationParser {
 
 				objscanner = new Scanner(input);
 			} catch (NullPointerException npe2) {
-				String url = "https://github.com/lucamonte/TextEditor/releases";
+				final String url = "https://github.com/lucamonte/TextEditor/releases";
 
 				setLabel("<html>Unable to find both system (" + localLanguageFileName + ") and fallback (" + fallbackLanguageFileName + ") translation files.<br/>" + 
 						"Maybe the application executable file is corrupted, try downloading it again from <a href=\"" + url + "\">GitHub</a></html>", url);
@@ -54,7 +54,7 @@ public class ConfigurationParser {
 			StringWriter stringWriter = new StringWriter();
 			e.printStackTrace(new PrintWriter(stringWriter));
 
-			String url = "https://github.com/lucamonte/TextEditor/issues";
+			final String url = "https://github.com/lucamonte/TextEditor/issues";
 
 			setLabel("<html>An unexpected error has occurred while initializing the application.<br/><br/>" +
 					"Stack trace of the error: <br/>" + stringWriter.toString().replace(System.lineSeparator(), "<br/>") + "<br/>" + 
