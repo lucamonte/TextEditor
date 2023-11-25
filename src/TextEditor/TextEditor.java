@@ -459,20 +459,21 @@ public class TextEditor {
 		if(openfilepath.equals("")) {
 			if(filechooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
 				openfilepath = filechooser.getSelectedFile().toString();
+
 				writeFile(openfilepath);
 			}
 		} else {
 			writeFile(openfilepath);
 		}
 
+		appendFileName();
+
 		checkEditing(!openfilepath.equals(""));
 	}
 
 	private static void writeFile(String filepath) {
 
-		if(!filepath.contains(".txt")) {
-			filepath += ".txt";
-		}
+		filepath = checkFileName(filepath);
 
 		File objfile = new File(filepath);
 
@@ -516,6 +517,8 @@ public class TextEditor {
 
 				objscanner.close();
 
+				appendFileName();
+
 				sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SUCCESSFUL_OPEN_NOTIFICATION"), TrayIcon.MessageType.INFO);
 			}	
 
@@ -534,6 +537,7 @@ public class TextEditor {
 
 			resetTextArea();
 			checkEditing(true);
+			appendFileName();
 
 			sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SUCCESSFUL_DELETE_NOTIFICATION"), TrayIcon.MessageType.INFO);
 
@@ -543,9 +547,38 @@ public class TextEditor {
 		}
 	}
 
+	private static void appendFileName() {
+		resetTitleBar();
+		openfilepath = checkFileName(openfilepath);
+
+		if(!openfilepath.equals("")) {
+			frame.setTitle(frame.getTitle() + " - " + openfilepath.substring(openfilepath.lastIndexOf(File.separator) + 1));
+		} 
+
+		checkEditing();
+	}
+
+	private static void resetTitleBar(boolean saved) {
+		frame.setTitle(getString("WINDOW_NAME"));
+		checkEditing(saved);
+	}
+
+	private static void resetTitleBar() {
+		resetTitleBar(false);
+	}
+
 	private static void newDocument() {
 		resetTextArea();
+		resetTitleBar(true);
 		openfilepath = "";
+	}
+
+	private static String checkFileName(String filename) {
+		if(!filename.contains(".txt")) {
+			filename += ".txt";
+		}
+
+		return filename;
 	}
 
 	private static void checkEditing() {
