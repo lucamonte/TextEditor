@@ -1,23 +1,22 @@
 package TextEditor.Config;
 
-import java.awt.Cursor;
 import java.awt.Desktop;
-import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Scanner;
-import java.io.PrintWriter; 
-import javax.swing.JLabel;
-import java.awt.event.MouseAdapter;
+import java.io.PrintWriter;
+import javax.swing.JEditorPane;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import TextEditor.TextEditor;
 
 public class ConfigurationParser {
 
 	private final static String SEPARATOR = "="; 
-	private static JLabel errorLabel = null;
+	private static JEditorPane errorPane = null;
 
 	public static boolean parse() {
 
@@ -43,10 +42,11 @@ public class ConfigurationParser {
 			} catch (NullPointerException npe2) {
 				final String url = "https://github.com/lucamonte/TextEditor/releases";
 
-				setLabel("<html>Unable to find both system (" + localLanguageFileName + ") and fallback (" + fallbackLanguageFileName + ") translation files.<br/>" + 
+				setErrorPane("<html>Unable to find both system (" + localLanguageFileName + ") and fallback (" + fallbackLanguageFileName + ") translation files.<br/>" + 
 						"Maybe the application executable file is corrupted, try downloading it again from <a href=\"" + url + "\">GitHub</a></html>", url);
 
-				TextEditor.showErrorDialog("Missing translations", errorLabel);
+
+				TextEditor.showErrorDialog("Missing translations", errorPane);
 
 				return false;
 			}
@@ -56,11 +56,11 @@ public class ConfigurationParser {
 
 			final String url = "https://github.com/lucamonte/TextEditor/issues";
 
-			setLabel("<html>An unexpected error has occurred while initializing the application.<br/><br/>" +
+			setErrorPane("<html>An unexpected error has occurred while initializing the application.<br/><br/>" +
 					"Stack trace of the error: <br/>" + stringWriter.toString().replace(System.lineSeparator(), "<br/>") + "<br/>" + 
 					"Please, report this on <a href=\"" + url + "\">GitHub</a></html>", url);
 
-			TextEditor.showErrorDialog("Generic error", errorLabel);
+			TextEditor.showErrorDialog("Generic error", errorPane);
 
 			return false;
 		}
@@ -77,19 +77,24 @@ public class ConfigurationParser {
 		return true;
 	} 
 
-	private static void setLabel(String text, String url) {
-		errorLabel = new JLabel(text);
-		errorLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+	private static void setErrorPane(String text, String url) {
+		errorPane = new JEditorPane();
+		errorPane.setContentType("text/html");
+		errorPane.setText(text);
+		errorPane.setOpaque(false);
+		errorPane.setEditable(false);
+		errorPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
 
-		errorLabel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				try {
+		errorPane.addHyperlinkListener(new HyperlinkListener() {
+			public void hyperlinkUpdate(HyperlinkEvent event) {
+				if(event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+					try {
 
-					Desktop.getDesktop().browse(new URI(url));
+						Desktop.getDesktop().browse(new URI(url));
 
-				} catch (IOException | URISyntaxException e1) {
-					e1.printStackTrace();
+					} catch (IOException | URISyntaxException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		});

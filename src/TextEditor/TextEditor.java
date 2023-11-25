@@ -32,7 +32,6 @@ import java.util.Scanner;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -573,8 +572,8 @@ public class TextEditor {
 		return result;
 	}
 
-	public static void showErrorDialog(String title, JLabel label) {
-		JOptionPane.showMessageDialog(frame, label, title, JOptionPane.ERROR_MESSAGE);
+	public static void showErrorDialog(String title, Object content) {
+		JOptionPane.showMessageDialog(frame, content, title, JOptionPane.ERROR_MESSAGE);
 	}
 
 	private static void checkButtons() {
