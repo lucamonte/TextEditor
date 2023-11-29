@@ -59,7 +59,7 @@ public class TextEditor {
 	private static JFrame frame;
 	private static Image icon = Toolkit.getDefaultToolkit().getImage(TextEditor.class.getResource("/images/icon.png"));
 	private static TrayIcon trayicon;
-	private static SystemTray systemtray = SystemTray.getSystemTray();
+	private static SystemTray systemtray;
 	private static Hashtable<String, String> strings = new Hashtable<String, String>();
 
 	private static JMenuItem menuitem_saveas;
@@ -738,6 +738,8 @@ public class TextEditor {
 	private static void createTrayMenu() {
 
 		if (SystemTray.isSupported()) {
+			
+			systemtray = SystemTray.getSystemTray();
 
 			traymenu = new PopupMenu();
 			trayicon = new TrayIcon(icon, getString("WINDOW_NAME"), traymenu);
