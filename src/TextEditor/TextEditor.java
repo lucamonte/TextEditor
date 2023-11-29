@@ -76,6 +76,9 @@ public class TextEditor {
 	private static JMenuItem menuitem_print;
 	private static JMenuItem menuitem_selectfont;
 	private static JMenuItem menuitem_selectcolor;
+	private static JMenuItem menuitem_language_system;
+	private static JMenuItem menuitem_language_italian;
+	private static JMenuItem menuitem_language_english;
 
 	private static MenuItem traymenuitem_new;
 	private static MenuItem traymenuitem_save;
@@ -89,6 +92,8 @@ public class TextEditor {
 
 	private static JMenu menu_file;
 	private static JMenu menu_text;
+	private static JMenu menu_settings;
+	private static JMenu submenu_language;
 
 	private static KeyStroke shortcut_save;
 	private static KeyStroke shortcut_new;
@@ -395,6 +400,7 @@ public class TextEditor {
 
 		menubar.add(menu_file);
 		menubar.add(menu_text);
+		menubar.add(menu_settings);
 	}
 
 	private static void createKeyStrokes() {
@@ -448,6 +454,10 @@ public class TextEditor {
 		menu_text.add(menuitem_paste);
 		menu_text.add(menuitem_selectfont);
 		menu_text.add(menuitem_selectcolor);
+		menu_settings.add(submenu_language);
+		submenu_language.add(menuitem_language_system);
+		submenu_language.add(menuitem_language_italian);
+		submenu_language.add(menuitem_language_english);
 	}
 
 	private static void resetTextArea() {
@@ -666,6 +676,8 @@ public class TextEditor {
 			frame = new JFrame(getString("WINDOW_NAME"));
 			menu_file = new JMenu(getString("FILE_MENU"));
 			menu_text = new JMenu(getString("TEXT_MENU"));
+			menu_settings = new JMenu("Impostazioni");
+			submenu_language = new JMenu("Lingua");
 			menuitem_saveas = new JMenuItem(getString("SAVE_AS"));
 			menuitem_deleteall = new JMenuItem(getString("DELETE_ALL"));
 			menuitem_open = new JMenuItem(getString("OPEN_FILE"));
@@ -680,6 +692,9 @@ public class TextEditor {
 			menuitem_print = new JMenuItem(getString("PRINT_FILE"));
 			menuitem_selectfont = new JMenuItem(getString("TEXT_FORMAT"));
 			menuitem_selectcolor = new JMenuItem(getString("TEXT_COLOR"));
+			menuitem_language_system = new JMenuItem("Sistema");
+			menuitem_language_italian = new JMenuItem("Italiano");
+			menuitem_language_english = new JMenuItem("Inglese");
 			traymenuitem_new = new MenuItem(getString("NEW_FILE"));
 			traymenuitem_exit = new MenuItem(getString("CLOSE_EDITOR"));
 			traymenuitem_save = new MenuItem(getString("SAVE_FILE"));
