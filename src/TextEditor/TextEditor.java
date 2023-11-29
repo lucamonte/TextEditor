@@ -401,6 +401,9 @@ public class TextEditor {
 		menubar.add(menu_file);
 		menubar.add(menu_text);
 		menubar.add(menu_settings);
+		
+		//WIP - temporairly hide the settings menu
+		menu_settings.setVisible(false);
 	}
 
 	private static void createKeyStrokes() {
