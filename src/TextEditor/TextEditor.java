@@ -152,11 +152,13 @@ public class TextEditor {
 		//Impostazione del FontChooser
 		setupFontChooser();
 
-		//Creazione menu nella System Tray
-		createTrayMenu();
+		if(SystemTray.isSupported()) {
+			//Creazione menu nella System Tray
+			createTrayMenu();
 
-		//Aggiunta degli elementi al menu della System Tray
-		addTrayMenuItems();
+			//Aggiunta degli elementi al menu della System Tray
+			addTrayMenuItems();	
+		}
 	}
 
 	private static void setupEventsListeners() {
