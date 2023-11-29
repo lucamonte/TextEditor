@@ -799,7 +799,7 @@ public class TextEditor {
 	}
 
 	private static void sendSystemTrayNotification(String title, String text, TrayIcon.MessageType type) {
-		if(getString("ENABLE_NOTIFICATIONS").equals("true")) {
+		if(getString("ENABLE_NOTIFICATIONS").equals("true") && SystemTray.isSupported()) {
 			trayicon.displayMessage(title, text, type);
 		}
 	}
