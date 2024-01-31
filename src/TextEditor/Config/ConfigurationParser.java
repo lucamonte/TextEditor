@@ -68,6 +68,7 @@ public class ConfigurationParser {
 		if(objscanner != null) {
 			while(objscanner.hasNextLine()) {
 				splitLine = objscanner.nextLine().split(SEPARATOR, -2);
+
 				TextEditor.putString(splitLine[0].trim(), splitLine[1].trim());
 			} 
 
@@ -77,6 +78,10 @@ public class ConfigurationParser {
 		return true;
 	} 
 
+	private static void setErrorPane(String text) {
+		setErrorPane(text, "");
+	}
+
 	private static void setErrorPane(String text, String url) {
 		errorPane = new JEditorPane();
 		errorPane.setContentType("text/html");
@@ -85,18 +90,46 @@ public class ConfigurationParser {
 		errorPane.setEditable(false);
 		errorPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
 
-		errorPane.addHyperlinkListener(new HyperlinkListener() {
-			public void hyperlinkUpdate(HyperlinkEvent event) {
-				if(event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-					try {
+		if(!url.equals("")) {
+			errorPane.addHyperlinkListener(new HyperlinkListener() {
+				public void hyperlinkUpdate(HyperlinkEvent event) {
+					if(event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+						try {
 
-						Desktop.getDesktop().browse(new URI(url));
+							Desktop.getDesktop().browse(new URI(url));
 
-					} catch (IOException | URISyntaxException e) {
-						e.printStackTrace();
+						} catch (IOException | URISyntaxException e) {
+							e.printStackTrace();
+						}
 					}
 				}
-			}
-		});
+			});
+		}
+	}
+
+	public static void loadLanguages() {
+
+		String[] splitLine;
+		Scanner objscanner = null;
+		InputStream input = TextEditor.class.getResourceAsStream("/config/languages.txt");
+
+		try {
+			objscanner = new Scanner(input);
+		}catch (NullPointerException npe) {
+
+			setErrorPane("<html>Unable to find language list file: the application will not correctly show the language list in the settings</html>");
+
+			TextEditor.showErrorDialog("Missing language list", errorPane);
+		}
+
+		if(objscanner != null) {
+			while(objscanner.hasNextLine()) {
+				splitLine = objscanner.nextLine().split(SEPARATOR, -2);
+
+				TextEditor.putLanguage(splitLine[0].trim(), splitLine[1].trim());
+			} 
+
+			objscanner.close();
+		}		
 	}
 }

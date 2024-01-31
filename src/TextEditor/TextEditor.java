@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Scanner;
 import javax.swing.JColorChooser;
@@ -61,6 +62,7 @@ public class TextEditor {
 	private static TrayIcon trayicon;
 	private static SystemTray systemtray;
 	private static Hashtable<String, String> strings = new Hashtable<String, String>();
+	private static Hashtable<String, String> languages = new Hashtable<String, String>();
 
 	private static JMenuItem menuitem_saveas;
 	private static JMenuItem menuitem_deleteall;
@@ -76,9 +78,6 @@ public class TextEditor {
 	private static JMenuItem menuitem_print;
 	private static JMenuItem menuitem_selectfont;
 	private static JMenuItem menuitem_selectcolor;
-	private static JMenuItem menuitem_language_system;
-	private static JMenuItem menuitem_language_italian;
-	private static JMenuItem menuitem_language_english;
 
 	private static MenuItem traymenuitem_new;
 	private static MenuItem traymenuitem_save;
@@ -402,10 +401,11 @@ public class TextEditor {
 
 		menubar.add(menu_file);
 		menubar.add(menu_text);
-		menubar.add(menu_settings);
-		
-		//WIP - temporairly hide the settings menu
-		menu_settings.setVisible(false);
+
+		if(!getString("SHOW_SETTINGS_MENU").equals("false")) {
+			menubar.add(menu_settings);
+			createLanguagesMenu();
+		}
 	}
 
 	private static void createKeyStrokes() {
@@ -460,9 +460,6 @@ public class TextEditor {
 		menu_text.add(menuitem_selectfont);
 		menu_text.add(menuitem_selectcolor);
 		menu_settings.add(submenu_language);
-		submenu_language.add(menuitem_language_system);
-		submenu_language.add(menuitem_language_italian);
-		submenu_language.add(menuitem_language_english);
 	}
 
 	private static void resetTextArea() {
@@ -697,15 +694,14 @@ public class TextEditor {
 			menuitem_print = new JMenuItem(getString("PRINT_FILE"));
 			menuitem_selectfont = new JMenuItem(getString("TEXT_FORMAT"));
 			menuitem_selectcolor = new JMenuItem(getString("TEXT_COLOR"));
-			menuitem_language_system = new JMenuItem("Sistema");
-			menuitem_language_italian = new JMenuItem("Italiano");
-			menuitem_language_english = new JMenuItem("Inglese");
 			traymenuitem_new = new MenuItem(getString("NEW_FILE"));
 			traymenuitem_exit = new MenuItem(getString("CLOSE_EDITOR"));
 			traymenuitem_save = new MenuItem(getString("SAVE_FILE"));
 			traymenuitem_saveas = new MenuItem(getString("SAVE_AS"));
 			traymenuitem_delete = new MenuItem(getString("DELETE_FILE"));
 			traymenuitem_print = new MenuItem(getString("PRINT_FILE"));
+
+			ConfigurationParser.loadLanguages();
 
 		} else exit();
 	}
@@ -740,7 +736,7 @@ public class TextEditor {
 	private static void createTrayMenu() {
 
 		if (SystemTray.isSupported()) {
-			
+
 			systemtray = SystemTray.getSystemTray();
 
 			traymenu = new PopupMenu();
@@ -847,5 +843,20 @@ public class TextEditor {
 			frame.dispose(); //Distruggo il frame
 		}
 		System.exit(0); //Termino il processo
+	}
+
+	public static void putLanguage(String languageCode, String language) {
+		languages.put(languageCode, language);
+	}
+
+	private static void createLanguagesMenu() {
+
+		submenu_language.add(getString("SYSTEM_LANGUAGE"));
+
+		Enumeration<String> languageCodes = languages.keys();
+
+		while(languageCodes.hasMoreElements()) {
+			submenu_language.add(languages.get(languageCodes.nextElement()));
+		}
 	}
 }

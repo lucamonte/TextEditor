@@ -41,3 +41,5 @@ DELETE_ERROR_NOTIFICATION=Non è stato possibile eliminare il documento
 PRINT_FILE=Stampa
 SUCCESSFUL_PRINT_NOTIFICATION=Il documento è stato stampato
 PRINT_ERROR_NOTIFICATION=Non è stato possibile stampare il documento
+SYSTEM_LANGUAGE=Sistema
+SHOW_SETTINGS_MENU=false

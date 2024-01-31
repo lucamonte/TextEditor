@@ -41,3 +41,4 @@ DELETE_ERROR_NOTIFICATION=Unable to delete the document
 PRINT_FILE=Print
 SUCCESSFUL_PRINT_NOTIFICATION=Document has been printed
 PRINT_ERROR_NOTIFICATION=Unable to print the document
+SHOW_SETTINGS_MENU=false
