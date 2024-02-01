@@ -871,7 +871,6 @@ public class TextEditor {
 		JMenuItem menuitem_language = new JMenuItem(description);
 
 		menuitem_language.addActionListener(e -> {
-			System.out.println("Selected language: " + languageCode);
 			if(TranslationManager.setSelectedLanguage(languageCode)) {
 				showMessageDialog(getString("LANGUAGE_SUCCESSFULLY_SET_TITLE"), getString("LANGUAGE_SUCCESSFULLY_SET"));
 			} else {
