@@ -49,6 +49,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import TextEditor.Config.ConfigurationParser;
+import TextEditor.Config.TranslationManager;
 import TextEditor.CustomDialogs.JFontChooser;
 
 public class TextEditor {
@@ -401,11 +402,8 @@ public class TextEditor {
 
 		menubar.add(menu_file);
 		menubar.add(menu_text);
-
-		if(!getString("SHOW_SETTINGS_MENU").equals("false")) {
-			menubar.add(menu_settings);
-			createLanguagesMenu();
-		}
+		menubar.add(menu_settings);
+		createLanguagesMenu();
 	}
 
 	private static void createKeyStrokes() {
@@ -618,7 +616,15 @@ public class TextEditor {
 	}
 
 	public static void showErrorDialog(String title, Object content) {
-		JOptionPane.showMessageDialog(frame, content, title, JOptionPane.ERROR_MESSAGE);
+		showMessageDialog(title, content, JOptionPane.ERROR_MESSAGE);
+	}
+
+	private static void showMessageDialog(String title, Object content) {
+		showMessageDialog(title, content, JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	private static void showMessageDialog(String title, Object content, int type) {
+		JOptionPane.showMessageDialog(frame, content, title, type);
 	}
 
 	private static void checkButtons() {
@@ -673,13 +679,13 @@ public class TextEditor {
 
 	private static void loadStrings() {
 		//Lettura file di configurazione contenente le stringhe
-		if(ConfigurationParser.parse()) {
+		if(ConfigurationParser.parse(TranslationManager.getSelectedLanguage())) {
 
 			frame = new JFrame(getString("WINDOW_NAME"));
 			menu_file = new JMenu(getString("FILE_MENU"));
 			menu_text = new JMenu(getString("TEXT_MENU"));
-			menu_settings = new JMenu("Impostazioni");
-			submenu_language = new JMenu("Lingua");
+			menu_settings = new JMenu(getString("SETTINGS_MENU"));
+			submenu_language = new JMenu(getString("LANGUAGE_MENU"));
 			menuitem_saveas = new JMenuItem(getString("SAVE_AS"));
 			menuitem_deleteall = new JMenuItem(getString("DELETE_ALL"));
 			menuitem_open = new JMenuItem(getString("OPEN_FILE"));
@@ -701,7 +707,7 @@ public class TextEditor {
 			traymenuitem_delete = new MenuItem(getString("DELETE_FILE"));
 			traymenuitem_print = new MenuItem(getString("PRINT_FILE"));
 
-			ConfigurationParser.loadLanguages();
+			TranslationManager.loadLanguages();
 
 		} else exit();
 	}
@@ -851,12 +857,29 @@ public class TextEditor {
 
 	private static void createLanguagesMenu() {
 
-		submenu_language.add(getString("SYSTEM_LANGUAGE"));
+		newLanguageMenuItem("sys", getString("SYSTEM_LANGUAGE"));
 
 		Enumeration<String> languageCodes = languages.keys();
 
 		while(languageCodes.hasMoreElements()) {
-			submenu_language.add(languages.get(languageCodes.nextElement()));
+			String langCode = languageCodes.nextElement();
+			newLanguageMenuItem(langCode, languages.get(langCode));
 		}
 	}
+
+	private static void newLanguageMenuItem(String languageCode, String description) {
+		JMenuItem menuitem_language = new JMenuItem(description);
+
+		menuitem_language.addActionListener(e -> {
+			System.out.println("Selected language: " + languageCode);
+			if(TranslationManager.setSelectedLanguage(languageCode)) {
+				showMessageDialog(getString("LANGUAGE_SUCCESSFULLY_SET_TITLE"), getString("LANGUAGE_SUCCESSFULLY_SET"));
+			} else {
+				showErrorDialog(getString("ERROR_SETTING_LANGUAGE_TITLE"), getString("ERROR_SETTING_LANGUAGE"));
+			}
+		});
+
+		submenu_language.add(menuitem_language);
+	}
+
 }
