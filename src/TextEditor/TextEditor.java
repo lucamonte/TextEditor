@@ -30,6 +30,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Scanner;
+
+import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -64,6 +66,7 @@ public class TextEditor {
 	private static SystemTray systemtray;
 	private static Hashtable<String, String> strings = new Hashtable<String, String>();
 	private static Hashtable<String, String> languages = new Hashtable<String, String>();
+	private static boolean startup = true;
 
 	private static JMenuItem menuitem_saveas;
 	private static JMenuItem menuitem_deleteall;
@@ -113,17 +116,22 @@ public class TextEditor {
 	private static JTextArea textarea;
 	private static JScrollPane scroll;
 
-	public static void run() {
+	public static void run() {		
 		//Generazione della finestra e relativi elementi
 		setupWindow();
 
 		//Gestione degli eventi e della logica applicativa
 		setupEventsListeners();
+
+		startup = false;
 	}
 
 	private static void setupWindow() {
 		//Impostazione dello stile dei componenti della UI. Commentare per utilizzare lo stile di default di AWT/Swing
 		setLookAndFeel();
+
+		//Creazione degli elementi dell'interfaccia
+		createUserInterfaceItems();
 
 		//Lettura delle stringhe degli elementi dell'interfaccia
 		loadStrings();
@@ -137,7 +145,7 @@ public class TextEditor {
 		//Creazione delle scorciatoie da tastiera
 		createKeyStrokes();
 
-		//Aggiunta degli elementi ai menù
+		//Aggiunta degli elementi ai men�
 		addMenuItems();
 
 		//Creazione area di testo
@@ -559,9 +567,10 @@ public class TextEditor {
 
 	private static void appendFileName() {
 		resetTitleBar();
-		openfilepath = checkFileName(openfilepath);
 
 		if(!openfilepath.equals("")) {
+			openfilepath = checkFileName(openfilepath);
+
 			frame.setTitle(frame.getTitle() + " - " + openfilepath.substring(openfilepath.lastIndexOf(File.separator) + 1));
 		} 
 
@@ -595,7 +604,7 @@ public class TextEditor {
 		checkEditing(false);
 	}
 
-	private static void checkEditing(boolean saved) {
+	private static void checkEditing(boolean saved) {		
 		if(!oldtext.equals(textarea.getText()) && !checkAsterisk()) {
 			frame.setTitle("* " + frame.getTitle());
 		}
@@ -617,10 +626,6 @@ public class TextEditor {
 
 	public static void showErrorDialog(String title, Object content) {
 		showMessageDialog(title, content, JOptionPane.ERROR_MESSAGE);
-	}
-
-	private static void showMessageDialog(String title, Object content) {
-		showMessageDialog(title, content, JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private static void showMessageDialog(String title, Object content, int type) {
@@ -653,7 +658,7 @@ public class TextEditor {
 				menuitem_cut.setEnabled(false);
 			}
 		} catch(IllegalArgumentException e) {
-			/* Quando viene cancellata una selezione composta da più caratteri,
+			/* Quando viene cancellata una selezione composta da pi� caratteri,
 			 * viene sollevata una IllegalArgumentException, che devo ignorare */
 		}
 
@@ -662,11 +667,11 @@ public class TextEditor {
 		try {
 			clipboardtext = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
 		} catch (UnsupportedFlavorException e) {
-			/* Se si è generata una UnsupportedFlavorException, la uso per capire che nella clipboard non c'è un testo
+			/* Se si � generata una UnsupportedFlavorException, la uso per capire che nella clipboard non c'� un testo
 			 * e che quindi devo disattivare il bottone "incolla" */
 			clipboardtext = "";
 		} catch (Exception e) {
-			//Se si è generato un qualsiasi altro tipo di eccezione, scrivo lo stack trace
+			//Se si � generato un qualsiasi altro tipo di eccezione, scrivo lo stack trace
 			e.printStackTrace();
 		}
 
@@ -677,39 +682,78 @@ public class TextEditor {
 		}
 	}
 
+	private static void createUserInterfaceItems() {
+
+		frame = new JFrame();
+		menu_file = new JMenu();
+		menu_text = new JMenu();
+		menu_settings = new JMenu();
+		submenu_language = new JMenu();
+		menuitem_saveas = new JMenuItem();
+		menuitem_deleteall = new JMenuItem();
+		menuitem_open = new JMenuItem();
+		menuitem_save = new JMenuItem();
+		menuitem_new = new JMenuItem();
+		menuitem_exit = new JMenuItem();
+		menuitem_selectall = new JMenuItem();
+		menuitem_copy = new JMenuItem();
+		menuitem_cut = new JMenuItem();
+		menuitem_paste = new JMenuItem();
+		menuitem_delete = new JMenuItem();
+		menuitem_print = new JMenuItem();
+		menuitem_selectfont = new JMenuItem();
+		menuitem_selectcolor = new JMenuItem();
+		traymenuitem_new = new MenuItem();
+		traymenuitem_exit = new MenuItem();
+		traymenuitem_save = new MenuItem();
+		traymenuitem_saveas = new MenuItem();
+		traymenuitem_delete = new MenuItem();
+		traymenuitem_print = new MenuItem();
+
+	}
+
 	private static void loadStrings() {
 		//Lettura file di configurazione contenente le stringhe
 		if(ConfigurationParser.parse(TranslationManager.getSelectedLanguage())) {
 
-			frame = new JFrame(getString("WINDOW_NAME"));
-			menu_file = new JMenu(getString("FILE_MENU"));
-			menu_text = new JMenu(getString("TEXT_MENU"));
-			menu_settings = new JMenu(getString("SETTINGS_MENU"));
-			submenu_language = new JMenu(getString("LANGUAGE_MENU"));
-			menuitem_saveas = new JMenuItem(getString("SAVE_AS"));
-			menuitem_deleteall = new JMenuItem(getString("DELETE_ALL"));
-			menuitem_open = new JMenuItem(getString("OPEN_FILE"));
-			menuitem_save = new JMenuItem(getString("SAVE_FILE"));
-			menuitem_new = new JMenuItem(getString("NEW_FILE"));
-			menuitem_exit = new JMenuItem(getString("CLOSE_EDITOR"));
-			menuitem_selectall = new JMenuItem(getString("SELECT_ALL"));
-			menuitem_copy = new JMenuItem(getString("COPY"));
-			menuitem_cut = new JMenuItem(getString("CUT"));
-			menuitem_paste = new JMenuItem(getString("PASTE"));
-			menuitem_delete = new JMenuItem(getString("DELETE_FILE"));
-			menuitem_print = new JMenuItem(getString("PRINT_FILE"));
-			menuitem_selectfont = new JMenuItem(getString("TEXT_FORMAT"));
-			menuitem_selectcolor = new JMenuItem(getString("TEXT_COLOR"));
-			traymenuitem_new = new MenuItem(getString("NEW_FILE"));
-			traymenuitem_exit = new MenuItem(getString("CLOSE_EDITOR"));
-			traymenuitem_save = new MenuItem(getString("SAVE_FILE"));
-			traymenuitem_saveas = new MenuItem(getString("SAVE_AS"));
-			traymenuitem_delete = new MenuItem(getString("DELETE_FILE"));
-			traymenuitem_print = new MenuItem(getString("PRINT_FILE"));
+			frame.setTitle(getString("WINDOW_NAME"));
+			menu_file.setText(getString("FILE_MENU"));
+			menu_text.setText(getString("TEXT_MENU"));
+			menu_settings.setText(getString("SETTINGS_MENU"));
+			submenu_language.setText(getString("LANGUAGE_MENU"));	
+			menuitem_saveas.setText(getString("SAVE_AS"));
+			menuitem_deleteall.setText(getString("DELETE_ALL"));
+			menuitem_open.setText(getString("OPEN_FILE"));
+			menuitem_save.setText(getString("SAVE_FILE"));
+			menuitem_new.setText(getString("NEW_FILE"));
+			menuitem_exit.setText(getString("CLOSE_EDITOR"));
+			menuitem_selectall.setText(getString("SELECT_ALL"));
+			menuitem_copy.setText(getString("COPY"));
+			menuitem_cut.setText(getString("CUT"));
+			menuitem_paste.setText(getString("PASTE"));
+			menuitem_delete.setText(getString("DELETE_FILE"));
+			menuitem_print.setText(getString("PRINT_FILE"));
+			menuitem_selectfont.setText(getString("TEXT_FORMAT"));
+			menuitem_selectcolor.setText(getString("TEXT_COLOR"));
+			traymenuitem_new.setLabel(getString("NEW_FILE"));
+			traymenuitem_exit.setLabel(getString("CLOSE_EDITOR"));
+			traymenuitem_save.setLabel(getString("SAVE_FILE"));
+			traymenuitem_saveas.setLabel(getString("SAVE_AS"));
+			traymenuitem_delete.setLabel(getString("DELETE_FILE"));
+			traymenuitem_print.setLabel(getString("PRINT_FILE"));
 
 			TranslationManager.loadLanguages();
 
+			if(!startup) {
+				appendFileName();
+			}
+
 		} else exit();
+	}
+
+	private static void updateStrings() {
+		strings.clear();
+		loadStrings();
 	}
 
 	private static void restoreCloseBehaviour() {
@@ -856,23 +900,41 @@ public class TextEditor {
 	}
 
 	private static void createLanguagesMenu() {
-
-		newLanguageMenuItem("sys", getString("SYSTEM_LANGUAGE"));
-
+		String langCode = "";
 		Enumeration<String> languageCodes = languages.keys();
 
 		while(languageCodes.hasMoreElements()) {
-			String langCode = languageCodes.nextElement();
+			langCode = languageCodes.nextElement();
 			newLanguageMenuItem(langCode, languages.get(langCode));
+			updateLanguagesMenu(TranslationManager.getSelectedLanguage());
+		}
+	}
+
+	private static void updateLanguagesMenu(String langCode) {		
+		for(int i = 0; i < submenu_language.getItemCount(); i++) {
+			JMenuItem menuitem_language = submenu_language.getItem(i);
+
+			if(menuitem_language.getName().equals(langCode)) {
+				menuitem_language.setIcon(new ImageIcon(TextEditor.class.getResource("/images/selected.png")));
+			} else {
+				menuitem_language.setIcon(null);
+			}
+
+			if(menuitem_language.getName().equals("sys")) {
+				menuitem_language.setText(getString("SYSTEM_LANGUAGE"));
+			}
 		}
 	}
 
 	private static void newLanguageMenuItem(String languageCode, String description) {
 		JMenuItem menuitem_language = new JMenuItem(description);
 
+		menuitem_language.setName(languageCode);
+
 		menuitem_language.addActionListener(e -> {
 			if(TranslationManager.setSelectedLanguage(languageCode)) {
-				showMessageDialog(getString("LANGUAGE_SUCCESSFULLY_SET_TITLE"), getString("LANGUAGE_SUCCESSFULLY_SET"));
+				updateStrings();
+				updateLanguagesMenu(languageCode);
 			} else {
 				showErrorDialog(getString("ERROR_SETTING_LANGUAGE_TITLE"), getString("ERROR_SETTING_LANGUAGE"));
 			}
@@ -880,5 +942,4 @@ public class TextEditor {
 
 		submenu_language.add(menuitem_language);
 	}
-
 }

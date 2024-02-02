@@ -32,6 +32,8 @@ public class TranslationManager {
 		}
 
 		if(objscanner != null) {
+			TextEditor.putLanguage("sys", TextEditor.getString("SYSTEM_LANGUAGE"));
+
 			while(objscanner.hasNextLine()) {
 				splitLine = objscanner.nextLine().split(ConfigurationParser.getSeparator(), -2);
 
