@@ -30,7 +30,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Scanner;
-
 import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
@@ -117,54 +116,54 @@ public class TextEditor {
 	private static JScrollPane scroll;
 
 	public static void run() {		
-		//Generazione della finestra e relativi elementi
+		//Generate the main window and its relative elements
 		setupWindow();
 
-		//Gestione degli eventi e della logica applicativa
+		//Generate event listeners
 		setupEventsListeners();
 
 		startup = false;
 	}
 
 	private static void setupWindow() {
-		//Impostazione dello stile dei componenti della UI. Commentare per utilizzare lo stile di default di AWT/Swing
+		//Set the system look and feel. Comment to use the AWT/Swing L&F
 		setLookAndFeel();
 
-		//Creazione degli elementi dell'interfaccia
+		//Create interface elements
 		createUserInterfaceItems();
 
-		//Lettura delle stringhe degli elementi dell'interfaccia
+		//Read UI elements strings
 		loadStrings();
 
-		//Creazione del frame
+		//Create the main frame
 		createFrame();
 
-		//Creazione del menu ed aggiunta degli elementi
+		//Create the menu and add its relative elements
 		createMenu();
 
-		//Creazione delle scorciatoie da tastiera
+		//Create keyboard shortcuts
 		createKeyStrokes();
 
-		//Aggiunta degli elementi ai men�
+		//Add items to menus
 		addMenuItems();
 
-		//Creazione area di testo
+		//Create text area
 		createTextArea();
 
-		//Aggiunta dei componenti al frame
+		//Add components to frame
 		setupFrame();
 
-		//Impostazione del FileChooser
+		//Setup file chooser
 		setupFileChooser();
 
-		//Impostazione del FontChooser
+		//Setup font chooser
 		setupFontChooser();
 
 		if(SystemTray.isSupported()) {
-			//Creazione menu nella System Tray
+			//Create system tray menu
 			createTrayMenu();
 
-			//Aggiunta degli elementi al menu della System Tray
+			//Add elements to the system tray menu
 			addTrayMenuItems();	
 		}
 	}
@@ -415,20 +414,20 @@ public class TextEditor {
 	}
 
 	private static void createKeyStrokes() {
-		shortcut_save = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK); //CTRL + S per salvare
-		shortcut_new = KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK); //CTRL + N per creare un nuovo documento
-		shortcut_open = KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK); //CTRL + O per aprire un documento
-		shortcut_saveas = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK); //CTRL + SHIFT + S per salvare con nome
-		shortcut_exit = KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK); //CTRL + Q per chiudere
-		shortcut_deleteall = KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK); //CTRL + SHIFT + D per cancellare tutto
-		shortcut_selectall = KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK); //CTRL + A per selezionare tutto
-		shortcut_copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK); //CTRL + C per copiare
-		shortcut_cut = KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK); //CTRL + X per tagliare
-		shortcut_paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK); //CTRL + V per incollare
-		shortcut_delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.CTRL_DOWN_MASK); //CTRL + DELETE per eliminare il file
-		shortcut_print = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK); //CTRL + P per stampare il documento
-		shortcut_selectfont = KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK); //CTRL + T per personalizzare il formato del testo
-		shortcut_selectcolor = KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK); //CTRL + L per personalizzare il colore del testo
+		shortcut_save = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK); //CTRL + S: save
+		shortcut_new = KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK); //CTRL + N: create new document
+		shortcut_open = KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK); //CTRL + O: open an existing document
+		shortcut_saveas = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK); //CTRL + SHIFT + S: save as
+		shortcut_exit = KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK); //CTRL + Q: quit
+		shortcut_deleteall = KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK); //CTRL + SHIFT + D: delete all
+		shortcut_selectall = KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK); //CTRL + A: select all
+		shortcut_copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK); //CTRL + C: copy
+		shortcut_cut = KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK); //CTRL + X: cut
+		shortcut_paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK); //CTRL + V: paste
+		shortcut_delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.CTRL_DOWN_MASK); //CTRL + DELETE: delete file
+		shortcut_print = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK); //CTRL + P: print document
+		shortcut_selectfont = KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK); //CTRL + T: personalize text format
+		shortcut_selectcolor = KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK); //CTRL + L: personalize text color
 
 		setAccelerators();
 	}
@@ -658,8 +657,8 @@ public class TextEditor {
 				menuitem_cut.setEnabled(false);
 			}
 		} catch(IllegalArgumentException e) {
-			/* Quando viene cancellata una selezione composta da pi� caratteri,
-			 * viene sollevata una IllegalArgumentException, che devo ignorare */
+			/* When a selection composed by more charaters is deleted, 
+			 * an IllegalArgumentException, to be ignored, is thrown. */
 		}
 
 		String clipboardtext = "";
@@ -667,11 +666,11 @@ public class TextEditor {
 		try {
 			clipboardtext = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
 		} catch (UnsupportedFlavorException e) {
-			/* Se si � generata una UnsupportedFlavorException, la uso per capire che nella clipboard non c'� un testo
-			 * e che quindi devo disattivare il bottone "incolla" */
+			/* If an UnsupportedFlavorException is thrown, 
+			 * the clipboard content is different than text and the "paste" button needs to be disabled */
 			clipboardtext = "";
 		} catch (Exception e) {
-			//Se si � generato un qualsiasi altro tipo di eccezione, scrivo lo stack trace
+			//Print stack trace for every other generic exception
 			e.printStackTrace();
 		}
 
@@ -713,7 +712,7 @@ public class TextEditor {
 	}
 
 	private static void loadStrings() {
-		//Lettura file di configurazione contenente le stringhe
+		//Read translation file
 		if(ConfigurationParser.parse(TranslationManager.getSelectedLanguage())) {
 
 			frame.setTitle(getString("WINDOW_NAME"));
@@ -757,7 +756,7 @@ public class TextEditor {
 	}
 
 	private static void restoreCloseBehaviour() {
-		//Se non ci sono più eventi in coda, ripristino il comportamento predefinito dell'evento di chiusura della finestra
+		//If there are no more events in the events queue, restore the default close operation
 		if(Toolkit.getDefaultToolkit().getSystemEventQueue().peekEvent() == null) {
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		}
@@ -853,7 +852,7 @@ public class TextEditor {
 	private static void bringFrameToFront() {
 
 		/*
-		 * Da https://stackoverflow.com/questions/34637597/bring-jframe-window-to-the-front
+		 * From https://stackoverflow.com/questions/34637597/bring-jframe-window-to-the-front
 		 */
 
 		SwingUtilities.invokeLater(new Runnable() {
@@ -870,13 +869,13 @@ public class TextEditor {
 				try {
 					final Point oldMouseLocation = MouseInfo.getPointerInfo().getLocation();
 
-					//Simula un click sulla barra del titolo
+					//Simulate a click on the title bar
 					Robot robot = new Robot();
 					robot.mouseMove(frame.getX() + 100, frame.getY() + 10);
 					robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
 					robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
 
-					//Sposta il mouse alla posizione precedente
+					//Move the mouse pointer to the previous location
 					robot.mouseMove((int) oldMouseLocation.getX(), (int) oldMouseLocation.getY());
 				} catch(Exception e) {
 					e.printStackTrace();
@@ -889,10 +888,10 @@ public class TextEditor {
 
 	private static void exit() {
 		if(frame != null) {
-			frame.setVisible(false); //Nascondo il frame
-			frame.dispose(); //Distruggo il frame
+			frame.setVisible(false); //Hide frame
+			frame.dispose(); //Destroy frame
 		}
-		System.exit(0); //Termino il processo
+		System.exit(0); //Terminate process
 	}
 
 	public static void putLanguage(String languageCode, String language) {
