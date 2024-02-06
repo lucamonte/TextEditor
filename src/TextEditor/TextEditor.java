@@ -164,7 +164,7 @@ public class TextEditor {
 			createTrayMenu();
 
 			//Add elements to the system tray menu
-			addTrayMenuItems();	
+			addTrayMenuItems();
 		}
 	}
 
@@ -372,6 +372,10 @@ public class TextEditor {
 	}
 
 	private static void setupFontChooser() {
+		if(fontchooser != null) {
+			fontchooser = null;
+		}
+		
 		fontchooser = new JFontChooser();
 	}
 
@@ -415,7 +419,7 @@ public class TextEditor {
 
 	private static void createKeyStrokes() {
 		shortcut_save = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK); //CTRL + S: save
-		shortcut_new = KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK); //CTRL + N: create new document
+		shortcut_new = KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK); //CTRL + N: create a new document
 		shortcut_open = KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK); //CTRL + O: open an existing document
 		shortcut_saveas = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK); //CTRL + SHIFT + S: save as
 		shortcut_exit = KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK); //CTRL + Q: quit
@@ -742,6 +746,9 @@ public class TextEditor {
 			traymenuitem_print.setLabel(getString("PRINT_FILE"));
 
 			TranslationManager.loadLanguages();
+			
+			//Rebuild font chooser with the new translation
+			setupFontChooser();
 
 			if(!startup) {
 				appendFileName();
