@@ -1,7 +1,7 @@
 /************************************************************
  * Copyright 2004-2005,2007-2008 Masahiko SAWAI All Rights Reserved. 
  ************************************************************/
-package TextEditor.CustomDialogs;
+package TextEditor.CustomElements;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -44,6 +44,7 @@ import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 import TextEditor.TextEditor;
+import TextEditor.Logger.Logger;
 
 /**
  * The<code>JFontChooser</code> class is a swing component 
@@ -547,7 +548,7 @@ public class JFontChooser extends JComponent {
 				Document doc = event.getDocument();
 				newValue = doc.getText(0, doc.getLength());
 			} catch (BadLocationException e) {
-				e.printStackTrace();
+				Logger.writeLog(e);
 			}
 
 			if (newValue.length() > 0) {

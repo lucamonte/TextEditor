@@ -5,6 +5,8 @@ import java.io.StringWriter;
 import java.util.Scanner;
 import java.io.PrintWriter;
 import TextEditor.TextEditor;
+import TextEditor.Errors.ErrorPaneBridge;
+import TextEditor.Logger.Logger;
 
 public class ConfigurationParser {
 
@@ -52,6 +54,7 @@ public class ConfigurationParser {
 		} catch (Exception e) {
 			StringWriter stringWriter = new StringWriter();
 			e.printStackTrace(new PrintWriter(stringWriter));
+			Logger.writeLog(e);
 
 			final String url = "https://github.com/lucamonte/TextEditor/issues";
 

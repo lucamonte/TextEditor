@@ -40,6 +40,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JSeparator;
+import javax.swing.undo.UndoManager;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
@@ -50,8 +52,10 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import TextEditor.Config.ConfigurationParser;
-import TextEditor.Config.TranslationManager;
-import TextEditor.CustomDialogs.JFontChooser;
+import TextEditor.CustomElements.ContextMenu;
+import TextEditor.CustomElements.JFontChooser;
+import TextEditor.Translation.TranslationManager;
+import TextEditor.Logger.Logger;
 
 public class TextEditor {
 
@@ -65,6 +69,7 @@ public class TextEditor {
 	private static SystemTray systemtray;
 	private static Hashtable<String, String> strings = new Hashtable<String, String>();
 	private static Hashtable<String, String> languages = new Hashtable<String, String>();
+	private static UndoManager undomanager = new UndoManager();
 	private static boolean startup = true;
 
 	private static JMenuItem menuitem_saveas;
@@ -78,6 +83,9 @@ public class TextEditor {
 	private static JMenuItem menuitem_cut;
 	private static JMenuItem menuitem_paste;
 	private static JMenuItem menuitem_delete;
+	private static JMenuItem menuitem_undo;
+	private static JMenuItem menuitem_redo;
+	private static JMenuItem menuitem_deletefile;
 	private static JMenuItem menuitem_print;
 	private static JMenuItem menuitem_selectfont;
 	private static JMenuItem menuitem_selectcolor;
@@ -107,6 +115,8 @@ public class TextEditor {
 	private static KeyStroke shortcut_copy;
 	private static KeyStroke shortcut_cut;
 	private static KeyStroke shortcut_paste;
+	private static KeyStroke shortcut_undo;
+	private static KeyStroke shortcut_redo;
 	private static KeyStroke shortcut_delete;
 	private static KeyStroke shortcut_print;
 	private static KeyStroke shortcut_selectfont;
@@ -270,7 +280,19 @@ public class TextEditor {
 			textarea.paste();
 		});
 
-		menuitem_delete.addActionListener(e -> {
+		menuitem_undo.addActionListener(e -> {
+			if(canUndo()) {
+				undo();
+			}
+		});
+
+		menuitem_redo.addActionListener(e -> {
+			if(canRedo()) {
+				redo();
+			}
+		});
+
+		menuitem_deletefile.addActionListener(e -> {
 			int dialog = showConfirmDialog(getString("WARNING"), getString("DELETE_CONFIRMATION"));
 
 			if(dialog == JOptionPane.YES_OPTION) {
@@ -285,13 +307,17 @@ public class TextEditor {
 			restoreCloseBehaviour();
 		});
 
+		menuitem_delete.addActionListener(e ->  {
+			replaceSelection();
+		});
+
 		menuitem_print.addActionListener(e -> {
 			try {
 				if(textarea.print()){
 					sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SUCCESSFUL_PRINT_NOTIFICATION"), TrayIcon.MessageType.INFO);
 				}
 			} catch(PrinterException ex) {
-				ex.printStackTrace();
+				Logger.writeLog(ex);
 				sendSystemTrayNotification(getString("WINDOW_NAME"), getString("PRINT_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
 			}
 		});
@@ -346,7 +372,7 @@ public class TextEditor {
 					if(dialog == JOptionPane.YES_OPTION) {
 						saveFile();
 						frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-					} else if (dialog == JOptionPane.CLOSED_OPTION) {
+					} else if(dialog == JOptionPane.CLOSED_OPTION) {
 						frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 					} else {
 						frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -375,7 +401,7 @@ public class TextEditor {
 		if(fontchooser != null) {
 			fontchooser = null;
 		}
-		
+
 		fontchooser = new JFontChooser();
 	}
 
@@ -399,6 +425,8 @@ public class TextEditor {
 		oldtext = textarea.getText();
 		textarea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 15));
 		textarea.setEditable(true);
+
+		addContextMenu();
 
 		checkButtons();
 	}
@@ -428,7 +456,9 @@ public class TextEditor {
 		shortcut_copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK); //CTRL + C: copy
 		shortcut_cut = KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK); //CTRL + X: cut
 		shortcut_paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK); //CTRL + V: paste
-		shortcut_delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.CTRL_DOWN_MASK); //CTRL + DELETE: delete file
+		shortcut_undo = KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK); //CTRL + Z: undo
+		shortcut_redo = KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK); //CTRL + Y: redo
+		shortcut_delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.CTRL_DOWN_MASK); //CTRL + DELETE: delete selection
 		shortcut_print = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK); //CTRL + P: print document
 		shortcut_selectfont = KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK); //CTRL + T: personalize text format
 		shortcut_selectcolor = KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK); //CTRL + L: personalize text color
@@ -447,7 +477,9 @@ public class TextEditor {
 		menuitem_copy.setAccelerator(shortcut_copy);
 		menuitem_cut.setAccelerator(shortcut_cut);
 		menuitem_paste.setAccelerator(shortcut_paste);
-		menuitem_delete.setAccelerator(shortcut_delete);
+		menuitem_undo.setAccelerator(shortcut_undo);
+		menuitem_redo.setAccelerator(shortcut_redo);
+		menuitem_deletefile.setAccelerator(shortcut_delete);
 		menuitem_print.setAccelerator(shortcut_print);
 		menuitem_selectfont.setAccelerator(shortcut_selectfont);
 		menuitem_selectcolor.setAccelerator(shortcut_selectcolor);
@@ -458,41 +490,76 @@ public class TextEditor {
 		menu_file.add(menuitem_open);
 		menu_file.add(menuitem_save);
 		menu_file.add(menuitem_saveas);
-		menu_file.add(menuitem_delete);
+		menu_file.add(menuitem_deletefile);
 		menu_file.add(menuitem_print);
 		menu_file.add(menuitem_exit);
-		menu_text.add(menuitem_deleteall);
-		menu_text.add(menuitem_selectall);
-		menu_text.add(menuitem_copy);
+		menu_text.add(menuitem_undo);
+		menu_text.add(menuitem_redo);
+		menu_text.add(new JSeparator());
 		menu_text.add(menuitem_cut);
+		menu_text.add(menuitem_copy);
 		menu_text.add(menuitem_paste);
+		menu_text.add(menuitem_delete);
+		menu_text.add(new JSeparator());
+		menu_text.add(menuitem_selectall);
+		menu_text.add(menuitem_deleteall);
+		menu_text.add(new JSeparator());
 		menu_text.add(menuitem_selectfont);
 		menu_text.add(menuitem_selectcolor);
 		menu_settings.add(submenu_language);
 	}
 
-	private static void resetTextArea() {
+	public static void addContextMenu() {
+		new ContextMenu(textarea);
+	}
+
+	public static void resetTextArea() {
 		textarea.setText(null);
 	}
 
+	public static void replaceSelection() {
+		textarea.replaceSelection("");
+	}
+
+	public static void undo() {
+		undomanager.undo();
+	}
+
+	public static void redo() {
+		undomanager.redo();
+	}
+
+	public static boolean canUndo() {
+		return undomanager.canUndo();
+	}
+
+	public static boolean canRedo() {
+		return undomanager.canRedo();
+	}
+
+	public static UndoManager getUndoManager() {
+		return undomanager;
+	}
+
 	private static void saveFile() {
+		boolean show_notification = true;
 
 		if(openfilepath.equals("")) {
 			if(filechooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
 				openfilepath = filechooser.getSelectedFile().toString();
-
-				writeFile(openfilepath);
+			} else {
+				show_notification = false;
 			}
-		} else {
-			writeFile(openfilepath);
 		}
+
+		writeFile(openfilepath, show_notification);
 
 		appendFileName();
 
 		checkEditing(!openfilepath.equals(""));
 	}
 
-	private static void writeFile(String filepath) {
+	private static void writeFile(String filepath, boolean show_notification) {
 
 		filepath = checkFileName(filepath);
 
@@ -510,10 +577,12 @@ public class TextEditor {
 			objwriter.flush();
 			objwriter.close();
 
-			sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SUCCESSFUL_SAVE_NOTIFICATION"), TrayIcon.MessageType.INFO);
+			if(show_notification) {
+				sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SUCCESSFUL_SAVE_NOTIFICATION"), TrayIcon.MessageType.INFO);
+			}
 
 		} catch(Exception e) {
-			e.printStackTrace();
+			Logger.writeLog(e);
 			sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SAVE_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
 		}
 	}
@@ -544,7 +613,7 @@ public class TextEditor {
 			}	
 
 		} catch(Exception e) {
-			e.printStackTrace();
+			Logger.writeLog(e);
 			sendSystemTrayNotification(getString("WINDOW_NAME"), getString("OPEN_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
 		}
 	}
@@ -563,7 +632,7 @@ public class TextEditor {
 			sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SUCCESSFUL_DELETE_NOTIFICATION"), TrayIcon.MessageType.INFO);
 
 		} catch(Exception e) {
-			e.printStackTrace();
+			Logger.writeLog(e);
 			sendSystemTrayNotification(getString("WINDOW_NAME"), getString("DELETE_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
 		}
 	}
@@ -637,10 +706,10 @@ public class TextEditor {
 
 	private static void checkButtons() {
 		if(openfilepath.equals("")) {
-			menuitem_delete.setEnabled(false);
+			menuitem_deletefile.setEnabled(false);
 			traymenuitem_delete.setEnabled(false);
 		} else {
-			menuitem_delete.setEnabled(true);
+			menuitem_deletefile.setEnabled(true);
 			traymenuitem_delete.setEnabled(true);
 		}
 
@@ -656,9 +725,11 @@ public class TextEditor {
 			if(textarea.getSelectedText() != null) {
 				menuitem_copy.setEnabled(true);
 				menuitem_cut.setEnabled(true);
+				menuitem_delete.setEnabled(true);
 			} else {
 				menuitem_copy.setEnabled(false);
 				menuitem_cut.setEnabled(false);
+				menuitem_delete.setEnabled(false);
 			}
 		} catch(IllegalArgumentException e) {
 			/* When a selection composed by more charaters is deleted, 
@@ -675,7 +746,7 @@ public class TextEditor {
 			clipboardtext = "";
 		} catch (Exception e) {
 			//Print stack trace for every other generic exception
-			e.printStackTrace();
+			Logger.writeLog(e);
 		}
 
 		if(clipboardtext.equals("")) {
@@ -683,6 +754,9 @@ public class TextEditor {
 		} else {
 			menuitem_paste.setEnabled(true);
 		}
+
+		menuitem_undo.setEnabled(canUndo());
+		menuitem_redo.setEnabled(canRedo());
 	}
 
 	private static void createUserInterfaceItems() {
@@ -702,7 +776,10 @@ public class TextEditor {
 		menuitem_copy = new JMenuItem();
 		menuitem_cut = new JMenuItem();
 		menuitem_paste = new JMenuItem();
+		menuitem_undo = new JMenuItem();
+		menuitem_redo = new JMenuItem();
 		menuitem_delete = new JMenuItem();
+		menuitem_deletefile = new JMenuItem();
 		menuitem_print = new JMenuItem();
 		menuitem_selectfont = new JMenuItem();
 		menuitem_selectcolor = new JMenuItem();
@@ -731,10 +808,13 @@ public class TextEditor {
 			menuitem_new.setText(getString("NEW_FILE"));
 			menuitem_exit.setText(getString("CLOSE_EDITOR"));
 			menuitem_selectall.setText(getString("SELECT_ALL"));
+			menuitem_undo.setText(getString("UNDO"));
+			menuitem_redo.setText(getString("REDO"));
 			menuitem_copy.setText(getString("COPY"));
 			menuitem_cut.setText(getString("CUT"));
 			menuitem_paste.setText(getString("PASTE"));
-			menuitem_delete.setText(getString("DELETE_FILE"));
+			menuitem_delete.setText(getString("DELETE"));
+			menuitem_deletefile.setText(getString("DELETE_FILE"));
 			menuitem_print.setText(getString("PRINT_FILE"));
 			menuitem_selectfont.setText(getString("TEXT_FORMAT"));
 			menuitem_selectcolor.setText(getString("TEXT_COLOR"));
@@ -746,12 +826,15 @@ public class TextEditor {
 			traymenuitem_print.setLabel(getString("PRINT_FILE"));
 
 			TranslationManager.loadLanguages();
-			
+
 			//Rebuild font chooser with the new translation
 			setupFontChooser();
 
 			if(!startup) {
 				appendFileName();
+
+				//Update context menu strings
+				ContextMenu.loadStrings();
 			}
 
 		} else exit();
@@ -777,7 +860,7 @@ public class TextEditor {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch(Exception e) {
-			e.printStackTrace();
+			Logger.writeLog(e);
 		}
 	}
 
@@ -804,7 +887,7 @@ public class TextEditor {
 			try {
 				systemtray.add(trayicon);
 			} catch (AWTException e) {
-				System.err.println("Unable to add TrayIcon");
+				Logger.writeLog(e);
 			}
 
 		}
@@ -827,7 +910,7 @@ public class TextEditor {
 
 		traymenuitem_delete.addActionListener(e -> {
 			bringFrameToFront();
-			menuitem_delete.doClick();
+			menuitem_deletefile.doClick();
 		});
 
 		traymenuitem_print.addActionListener(e -> {
@@ -885,7 +968,7 @@ public class TextEditor {
 					//Move the mouse pointer to the previous location
 					robot.mouseMove((int) oldMouseLocation.getX(), (int) oldMouseLocation.getY());
 				} catch(Exception e) {
-					e.printStackTrace();
+					Logger.writeLog(e);
 				} finally {
 					frame.setAlwaysOnTop(false);
 				}
