@@ -118,6 +118,7 @@ public class TextEditor {
 	private static KeyStroke shortcut_undo;
 	private static KeyStroke shortcut_redo;
 	private static KeyStroke shortcut_delete;
+	private static KeyStroke shortcut_deletefile;
 	private static KeyStroke shortcut_print;
 	private static KeyStroke shortcut_selectfont;
 	private static KeyStroke shortcut_selectcolor;
@@ -459,6 +460,7 @@ public class TextEditor {
 		shortcut_undo = KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK); //CTRL + Z: undo
 		shortcut_redo = KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK); //CTRL + Y: redo
 		shortcut_delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.CTRL_DOWN_MASK); //CTRL + DELETE: delete selection
+		shortcut_deletefile = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK); //CTRL + SHIFT + DELETE: delete file
 		shortcut_print = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK); //CTRL + P: print document
 		shortcut_selectfont = KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK); //CTRL + T: personalize text format
 		shortcut_selectcolor = KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK); //CTRL + L: personalize text color
@@ -479,7 +481,8 @@ public class TextEditor {
 		menuitem_paste.setAccelerator(shortcut_paste);
 		menuitem_undo.setAccelerator(shortcut_undo);
 		menuitem_redo.setAccelerator(shortcut_redo);
-		menuitem_deletefile.setAccelerator(shortcut_delete);
+		menuitem_delete.setAccelerator(shortcut_delete);
+		menuitem_deletefile.setAccelerator(shortcut_deletefile);
 		menuitem_print.setAccelerator(shortcut_print);
 		menuitem_selectfont.setAccelerator(shortcut_selectfont);
 		menuitem_selectcolor.setAccelerator(shortcut_selectcolor);
