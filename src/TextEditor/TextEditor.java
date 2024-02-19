@@ -30,7 +30,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Scanner;
-import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -56,6 +55,7 @@ import TextEditor.CustomElements.ContextMenu;
 import TextEditor.CustomElements.JFontChooser;
 import TextEditor.Translation.TranslationManager;
 import TextEditor.Logger.Logger;
+import TextEditor.Icons.Icons;
 
 public class TextEditor {
 
@@ -64,7 +64,7 @@ public class TextEditor {
 	private static JFontChooser fontchooser;
 	private static String oldtext = "";
 	private static JFrame frame;
-	private static Image icon = Toolkit.getDefaultToolkit().getImage(TextEditor.class.getResource("/images/icon.png"));
+	private static Image icon = Icons.getImage(Icons.IconTypes.APPLICATION);
 	private static TrayIcon trayicon;
 	private static SystemTray systemtray;
 	private static Hashtable<String, String> strings = new Hashtable<String, String>();
@@ -459,7 +459,7 @@ public class TextEditor {
 		shortcut_paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK); //CTRL + V: paste
 		shortcut_undo = KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK); //CTRL + Z: undo
 		shortcut_redo = KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK); //CTRL + Y: redo
-		shortcut_delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.CTRL_DOWN_MASK); //CTRL + DELETE: delete selection
+		shortcut_delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.VK_UNDEFINED); //DELETE: delete selection
 		shortcut_deletefile = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK); //CTRL + SHIFT + DELETE: delete file
 		shortcut_print = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK); //CTRL + P: print document
 		shortcut_selectfont = KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK); //CTRL + T: personalize text format
@@ -510,9 +510,36 @@ public class TextEditor {
 		menu_text.add(menuitem_selectfont);
 		menu_text.add(menuitem_selectcolor);
 		menu_settings.add(submenu_language);
+
+		try {
+			addIcons();
+		} catch(Exception e) {
+			Logger.writeLog(e);
+		}
 	}
 
-	public static void addContextMenu() {
+	private static void addIcons() {
+		menuitem_new.setIcon(Icons.getImageIcon(Icons.IconTypes.NEW_FILE));
+		menuitem_open.setIcon(Icons.getImageIcon(Icons.IconTypes.OPEN_FILE));
+		menuitem_save.setIcon(Icons.getImageIcon(Icons.IconTypes.SAVE));
+		menuitem_saveas.setIcon(Icons.getImageIcon(Icons.IconTypes.SAVE_AS));
+		menuitem_deletefile.setIcon(Icons.getImageIcon(Icons.IconTypes.DELETE_FILE));
+		menuitem_print.setIcon(Icons.getImageIcon(Icons.IconTypes.PRINT));
+		menuitem_exit.setIcon(Icons.getImageIcon(Icons.IconTypes.EXIT));
+		menuitem_undo.setIcon(Icons.getImageIcon(Icons.IconTypes.UNDO));
+		menuitem_redo.setIcon(Icons.getImageIcon(Icons.IconTypes.REDO));
+		menuitem_copy.setIcon(Icons.getImageIcon(Icons.IconTypes.COPY));
+		menuitem_paste.setIcon(Icons.getImageIcon(Icons.IconTypes.PASTE));
+		menuitem_cut.setIcon(Icons.getImageIcon(Icons.IconTypes.CUT));
+		menuitem_delete.setIcon(Icons.getImageIcon(Icons.IconTypes.DELETE));
+		menuitem_selectall.setIcon(Icons.getImageIcon(Icons.IconTypes.SELECT_ALL));
+		menuitem_deleteall.setIcon(Icons.getImageIcon(Icons.IconTypes.DELETE_ALL));
+		menuitem_selectfont.setIcon(Icons.getImageIcon(Icons.IconTypes.SELECT_FONT));
+		menuitem_selectcolor.setIcon(Icons.getImageIcon(Icons.IconTypes.SELECT_COLOR));
+		submenu_language.setIcon(Icons.getImageIcon(Icons.IconTypes.SELECT_LANGUAGE));
+	}
+
+	private static void addContextMenu() {
 		new ContextMenu(textarea);
 	}
 
@@ -1007,7 +1034,7 @@ public class TextEditor {
 			JMenuItem menuitem_language = submenu_language.getItem(i);
 
 			if(menuitem_language.getName().equals(langCode)) {
-				menuitem_language.setIcon(new ImageIcon(TextEditor.class.getResource("/images/selected.png")));
+				menuitem_language.setIcon(Icons.getImageIcon(Icons.IconTypes.SELECTED));
 			} else {
 				menuitem_language.setIcon(null);
 			}
