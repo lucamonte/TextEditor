@@ -1,4 +1,4 @@
-package TextEditor.Config;
+package TextEditor.Translation;
 
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -8,14 +8,14 @@ import TextEditor.TextEditor;
 import TextEditor.Errors.ErrorPaneBridge;
 import TextEditor.Logger.Logger;
 
-public class ConfigurationParser {
+public class TranslationLoader {
 
 	private final static String SEPARATOR = "="; 
 
 	public static boolean parse(String selectedLanguage) {
 
 		String[] splitLine;
-		final String filePrefix = "/config/strings_";
+		final String filePrefix = "/strings/strings_";
 		String systemLanguage = "";
 
 		if(selectedLanguage.equals("sys")) {

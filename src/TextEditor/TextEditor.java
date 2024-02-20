@@ -50,9 +50,10 @@ import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import TextEditor.Config.ConfigurationParser;
+import TextEditor.Config.ConfigurationManager;
 import TextEditor.CustomElements.ContextMenu;
 import TextEditor.CustomElements.JFontChooser;
+import TextEditor.Translation.TranslationLoader;
 import TextEditor.Translation.TranslationManager;
 import TextEditor.Logger.Logger;
 import TextEditor.Icons.Icons;
@@ -89,6 +90,7 @@ public class TextEditor {
 	private static JMenuItem menuitem_print;
 	private static JMenuItem menuitem_selectfont;
 	private static JMenuItem menuitem_selectcolor;
+	private static JMenuItem menuitem_notifications;
 
 	private static MenuItem traymenuitem_new;
 	private static MenuItem traymenuitem_save;
@@ -122,6 +124,7 @@ public class TextEditor {
 	private static KeyStroke shortcut_print;
 	private static KeyStroke shortcut_selectfont;
 	private static KeyStroke shortcut_selectcolor;
+	private static KeyStroke shortcut_notifications;
 
 	private static JTextArea textarea;
 	private static JScrollPane scroll;
@@ -339,6 +342,10 @@ public class TextEditor {
 			}
 		});
 
+		menuitem_notifications.addActionListener(e -> {
+			toggleNotifications();
+		});
+
 		textarea.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void removeUpdate(DocumentEvent e) {
@@ -464,6 +471,7 @@ public class TextEditor {
 		shortcut_print = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK); //CTRL + P: print document
 		shortcut_selectfont = KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK); //CTRL + T: personalize text format
 		shortcut_selectcolor = KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK); //CTRL + L: personalize text color
+		shortcut_notifications = KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK); //CTRL + SHIFT + N: toggle notifications
 
 		setAccelerators();
 	}
@@ -486,6 +494,7 @@ public class TextEditor {
 		menuitem_print.setAccelerator(shortcut_print);
 		menuitem_selectfont.setAccelerator(shortcut_selectfont);
 		menuitem_selectcolor.setAccelerator(shortcut_selectcolor);
+		menuitem_notifications.setAccelerator(shortcut_notifications);
 	}
 
 	private static void addMenuItems() {
@@ -510,6 +519,7 @@ public class TextEditor {
 		menu_text.add(menuitem_selectfont);
 		menu_text.add(menuitem_selectcolor);
 		menu_settings.add(submenu_language);
+		menu_settings.add(menuitem_notifications);
 
 		try {
 			addIcons();
@@ -537,6 +547,10 @@ public class TextEditor {
 		menuitem_selectfont.setIcon(Icons.getImageIcon(Icons.IconTypes.SELECT_FONT));
 		menuitem_selectcolor.setIcon(Icons.getImageIcon(Icons.IconTypes.SELECT_COLOR));
 		submenu_language.setIcon(Icons.getImageIcon(Icons.IconTypes.SELECT_LANGUAGE));
+
+		if(ConfigurationManager.getProperty("enable_notifications").equals("true")) {
+			menuitem_notifications.setIcon(Icons.getImageIcon(Icons.IconTypes.SELECTED));
+		}
 	}
 
 	private static void addContextMenu() {
@@ -813,6 +827,7 @@ public class TextEditor {
 		menuitem_print = new JMenuItem();
 		menuitem_selectfont = new JMenuItem();
 		menuitem_selectcolor = new JMenuItem();
+		menuitem_notifications = new JMenuItem();
 		traymenuitem_new = new MenuItem();
 		traymenuitem_exit = new MenuItem();
 		traymenuitem_save = new MenuItem();
@@ -824,7 +839,7 @@ public class TextEditor {
 
 	private static void loadStrings() {
 		//Read translation file
-		if(ConfigurationParser.parse(TranslationManager.getSelectedLanguage())) {
+		if(TranslationLoader.parse(TranslationManager.getSelectedLanguage())) {
 
 			frame.setTitle(getString("WINDOW_NAME"));
 			menu_file.setText(getString("FILE_MENU"));
@@ -848,6 +863,7 @@ public class TextEditor {
 			menuitem_print.setText(getString("PRINT_FILE"));
 			menuitem_selectfont.setText(getString("TEXT_FORMAT"));
 			menuitem_selectcolor.setText(getString("TEXT_COLOR"));
+			menuitem_notifications.setText(getString("TEXT_NOTIFICATIONS"));
 			traymenuitem_new.setLabel(getString("NEW_FILE"));
 			traymenuitem_exit.setLabel(getString("CLOSE_EDITOR"));
 			traymenuitem_save.setLabel(getString("SAVE_FILE"));
@@ -964,7 +980,7 @@ public class TextEditor {
 	}
 
 	private static void sendSystemTrayNotification(String title, String text, TrayIcon.MessageType type) {
-		if(getString("ENABLE_NOTIFICATIONS").equals("true") && SystemTray.isSupported()) {
+		if(ConfigurationManager.getProperty("enable_notifications").equals("true") && SystemTray.isSupported()) {
 			trayicon.displayMessage(title, text, type);
 		}
 	}
@@ -1060,5 +1076,23 @@ public class TextEditor {
 		});
 
 		submenu_language.add(menuitem_language);
+	}
+
+	private static void toggleNotifications() {
+		if(ConfigurationManager.getProperty("enable_notifications").equals("true")) {
+			ConfigurationManager.setProperty("enable_notifications", "false");
+			setNotificationsMenuIcon(false);
+		} else {
+			ConfigurationManager.setProperty("enable_notifications", "true");
+			setNotificationsMenuIcon(true);
+		}
+	}
+
+	private static void setNotificationsMenuIcon(boolean selected) {
+		if(selected) {
+			menuitem_notifications.setIcon(Icons.getImageIcon(Icons.IconTypes.SELECTED));
+		} else {
+			menuitem_notifications.setIcon(null);
+		}
 	}
 }
