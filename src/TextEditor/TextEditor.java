@@ -91,6 +91,8 @@ public class TextEditor {
 	private static JMenuItem menuitem_selectfont;
 	private static JMenuItem menuitem_selectcolor;
 	private static JMenuItem menuitem_notifications;
+	private static JMenuItem menuitem_preservecolor;
+	private static JMenuItem menuitem_preservefont;
 
 	private static MenuItem traymenuitem_new;
 	private static MenuItem traymenuitem_save;
@@ -125,6 +127,8 @@ public class TextEditor {
 	private static KeyStroke shortcut_selectfont;
 	private static KeyStroke shortcut_selectcolor;
 	private static KeyStroke shortcut_notifications;
+	private static KeyStroke shortcut_preservecolor;
+	private static KeyStroke shortcut_preservefont;
 
 	private static JTextArea textarea;
 	private static JScrollPane scroll;
@@ -140,6 +144,9 @@ public class TextEditor {
 	}
 
 	private static void setupWindow() {
+		//Refresh configuration (set missing properties to default values)
+		ConfigurationManager.saveDefaultProperties();
+
 		//Set the system look and feel. Comment to use the AWT/Swing L&F
 		setLookAndFeel();
 
@@ -330,20 +337,32 @@ public class TextEditor {
 			int dialog = fontchooser.showDialog(textarea);
 
 			if(dialog == JFontChooser.OK_OPTION) {
-				textarea.setFont(fontchooser.getSelectedFont());
+				setFont(fontchooser.getSelectedFont());
 			}
 		});
 
 		menuitem_selectcolor.addActionListener(e -> {
-			Color new_color = JColorChooser.showDialog(textarea, getString("COLOR_WINDOW_NAME"), textarea.getForeground());
-
-			if(!textarea.getForeground().equals(new_color) && new_color != null) {
-				textarea.setForeground(new_color);
-			}
+			setColor(JColorChooser.showDialog(textarea, getString("COLOR_WINDOW_NAME"), textarea.getForeground()));
 		});
 
 		menuitem_notifications.addActionListener(e -> {
-			toggleNotifications();
+			toggleProperty("enable_notifications", menuitem_notifications);
+		});
+
+		menuitem_preservecolor.addActionListener(e -> {
+			toggleProperty("preserve_color", menuitem_preservecolor);
+
+			if(ConfigurationManager.getProperty("preserve_color").equals("true")) {
+				setColor(loadColor());
+			}
+		});
+
+		menuitem_preservefont.addActionListener(e -> {
+			toggleProperty("preserve_font", menuitem_preservefont);
+
+			if(ConfigurationManager.getProperty("preserve_font").equals("true")) {
+				setFont(loadFont());
+			}
 		});
 
 		textarea.getDocument().addDocumentListener(new DocumentListener() {
@@ -426,13 +445,41 @@ public class TextEditor {
 		scroll = new JScrollPane(textarea);
 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
+		final Color default_color = new Color(0, 0, 0);
+		final Font default_font = new Font(Font.MONOSPACED, Font.PLAIN, 15);
+
 		if(UIManager.getLookAndFeel().getClass().toString().contains(UIManager.getSystemLookAndFeelClassName())) {
 			scroll.setBorder(null);
 		}
 
 		oldtext = textarea.getText();
-		textarea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 15));
 		textarea.setEditable(true);
+
+		if(ConfigurationManager.getProperty("preserve_color").equals("true")) {
+			try {
+				setColor(loadColor());
+			} catch (NumberFormatException nfe) {
+				saveColor(default_color);
+				setColor(loadColor());
+			} catch (Exception e) {
+				Logger.writeLog(e);
+			}
+		} else {
+			setColor(default_color);
+		}
+
+		if(ConfigurationManager.getProperty("preserve_color").equals("true")) {
+			try {
+				setFont(loadFont());
+			} catch (NumberFormatException nfe) {
+				saveFont(default_font);
+				setFont(loadFont());
+			} catch (Exception e) {
+				Logger.writeLog(e);
+			}
+		} else {
+			setFont(default_font);
+		}
 
 		addContextMenu();
 
@@ -472,6 +519,8 @@ public class TextEditor {
 		shortcut_selectfont = KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.CTRL_DOWN_MASK); //CTRL + T: personalize text format
 		shortcut_selectcolor = KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK); //CTRL + L: personalize text color
 		shortcut_notifications = KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK); //CTRL + SHIFT + N: toggle notifications
+		shortcut_preservecolor = KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK); //CTRL + SHIFT + C: toggle preserve color
+		shortcut_preservefont = KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK); //CTRL + SHIFT + F: toggle preserve font
 
 		setAccelerators();
 	}
@@ -495,6 +544,8 @@ public class TextEditor {
 		menuitem_selectfont.setAccelerator(shortcut_selectfont);
 		menuitem_selectcolor.setAccelerator(shortcut_selectcolor);
 		menuitem_notifications.setAccelerator(shortcut_notifications);
+		menuitem_preservecolor.setAccelerator(shortcut_preservecolor);
+		menuitem_preservefont.setAccelerator(shortcut_preservefont);
 	}
 
 	private static void addMenuItems() {
@@ -519,7 +570,13 @@ public class TextEditor {
 		menu_text.add(menuitem_selectfont);
 		menu_text.add(menuitem_selectcolor);
 		menu_settings.add(submenu_language);
-		menu_settings.add(menuitem_notifications);
+
+		if(SystemTray.isSupported()) {
+			menu_settings.add(menuitem_notifications);
+		}
+
+		menu_settings.add(menuitem_preservecolor);
+		menu_settings.add(menuitem_preservefont);
 
 		try {
 			addIcons();
@@ -548,9 +605,9 @@ public class TextEditor {
 		menuitem_selectcolor.setIcon(Icons.getImageIcon(Icons.IconTypes.SELECT_COLOR));
 		submenu_language.setIcon(Icons.getImageIcon(Icons.IconTypes.SELECT_LANGUAGE));
 
-		if(ConfigurationManager.getProperty("enable_notifications").equals("true")) {
-			menuitem_notifications.setIcon(Icons.getImageIcon(Icons.IconTypes.SELECTED));
-		}
+		setMenuIcon(menuitem_notifications, ConfigurationManager.getProperty("enable_notifications").equals("true"));
+		setMenuIcon(menuitem_preservecolor, ConfigurationManager.getProperty("preserve_color").equals("true"));
+		setMenuIcon(menuitem_preservefont, ConfigurationManager.getProperty("preserve_font").equals("true"));
 	}
 
 	private static void addContextMenu() {
@@ -828,6 +885,8 @@ public class TextEditor {
 		menuitem_selectfont = new JMenuItem();
 		menuitem_selectcolor = new JMenuItem();
 		menuitem_notifications = new JMenuItem();
+		menuitem_preservecolor = new JMenuItem();
+		menuitem_preservefont = new JMenuItem();
 		traymenuitem_new = new MenuItem();
 		traymenuitem_exit = new MenuItem();
 		traymenuitem_save = new MenuItem();
@@ -864,6 +923,8 @@ public class TextEditor {
 			menuitem_selectfont.setText(getString("TEXT_FORMAT"));
 			menuitem_selectcolor.setText(getString("TEXT_COLOR"));
 			menuitem_notifications.setText(getString("TEXT_NOTIFICATIONS"));
+			menuitem_preservecolor.setText(getString("TEXT_PRESERVE_COLOR"));
+			menuitem_preservefont.setText(getString("TEXT_PRESERVE_FONT"));
 			traymenuitem_new.setLabel(getString("NEW_FILE"));
 			traymenuitem_exit.setLabel(getString("CLOSE_EDITOR"));
 			traymenuitem_save.setLabel(getString("SAVE_FILE"));
@@ -1078,21 +1139,63 @@ public class TextEditor {
 		submenu_language.add(menuitem_language);
 	}
 
-	private static void toggleNotifications() {
-		if(ConfigurationManager.getProperty("enable_notifications").equals("true")) {
-			ConfigurationManager.setProperty("enable_notifications", "false");
-			setNotificationsMenuIcon(false);
+	private static void toggleProperty(String property, JMenuItem menuitem) {
+		if(ConfigurationManager.getProperty(property).equals("true")) {
+			ConfigurationManager.setProperty(property, "false");
+			setMenuIcon(menuitem, false);
 		} else {
-			ConfigurationManager.setProperty("enable_notifications", "true");
-			setNotificationsMenuIcon(true);
+			ConfigurationManager.setProperty(property, "true");
+			setMenuIcon(menuitem, true);
 		}
 	}
 
-	private static void setNotificationsMenuIcon(boolean selected) {
+	private static void setMenuIcon(JMenuItem menuitem, boolean selected) {
 		if(selected) {
-			menuitem_notifications.setIcon(Icons.getImageIcon(Icons.IconTypes.SELECTED));
+			menuitem.setIcon(Icons.getImageIcon(Icons.IconTypes.SELECTED));
 		} else {
-			menuitem_notifications.setIcon(null);
+			menuitem.setIcon(null);
 		}
+	}
+
+	private static void setColor(Color color) {
+		if(!textarea.getForeground().equals(color) && color != null) {
+			textarea.setForeground(color);
+
+			if(ConfigurationManager.getProperty("preserve_color").equals("true")) {
+				saveColor(color);
+			}
+		}
+	}
+
+	private static void saveColor(Color color) {
+		ConfigurationManager.setProperty("color.red", String.valueOf(color.getRed()));
+		ConfigurationManager.setProperty("color.green", String.valueOf(color.getGreen()));
+		ConfigurationManager.setProperty("color.blue", String.valueOf(color.getBlue()));
+	}
+
+	private static Color loadColor() {
+		return new Color (Integer.parseInt(ConfigurationManager.getProperty("color.red")),
+				Integer.parseInt(ConfigurationManager.getProperty("color.green")),
+				Integer.parseInt(ConfigurationManager.getProperty("color.blue")));
+	}
+
+	private static void setFont(Font font) {
+		textarea.setFont(font);
+
+		if(ConfigurationManager.getProperty("preserve_font").equals("true")) {
+			saveFont(font);
+		}
+	}
+
+	private static void saveFont(Font font) {
+		ConfigurationManager.setProperty("font.name", font.getName());
+		ConfigurationManager.setProperty("font.style", String.valueOf(font.getStyle()));
+		ConfigurationManager.setProperty("font.size", String.valueOf(font.getSize()));
+	}
+
+	private static Font loadFont() {
+		return new Font(ConfigurationManager.getProperty("font.name"),
+				Integer.parseInt(ConfigurationManager.getProperty("font.style")),
+				Integer.parseInt(ConfigurationManager.getProperty("font.size")));
 	}
 }

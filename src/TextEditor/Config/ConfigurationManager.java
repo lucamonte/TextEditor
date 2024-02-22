@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Properties;
 import TextEditor.Logger.Logger;
 
@@ -12,27 +14,44 @@ public class ConfigurationManager {
 	private static Properties objproperties = new Properties();
 	private final static String PROPERTIES_FILE_PATH = System.getProperty("user.home") + File.separator + "TextEditor.properties";
 	private static boolean properties_loaded = false;
+	private static Hashtable<String, String> default_properties = new Hashtable<String, String>();
 
-	private static boolean saveDefaultProperties() {
-		objproperties.setProperty("default_language", "sys");
-		objproperties.setProperty("enable_notifications", "true");
+	public static boolean saveDefaultProperties() {
+		default_properties.put("default_language", "sys");
+		default_properties.put("enable_notifications", "true");
+		default_properties.put("preserve_color", "true");
+		default_properties.put("preserve_font", "true");
+
+		Enumeration<String> keys = default_properties.keys();
+
+		while(keys.hasMoreElements()) {
+			String property = keys.nextElement();
+
+			if (getProperty(property) == null) {
+				setProperty(property, default_properties.get(property));
+			}
+		}
 
 		return writePropertiesFile();
 	}
 
 	private static boolean loadPropertiesFile() {
+		boolean properties_saved = true;
+
 		try {
 			if(!new File(PROPERTIES_FILE_PATH).exists()) {
-				saveDefaultProperties();
+				properties_saved = saveDefaultProperties();
 			}
 
-			objproperties.load(new FileReader(PROPERTIES_FILE_PATH));
-			properties_loaded = true;
-			return true;
-		} catch (IOException e) {
+			if(properties_saved) {
+				objproperties.load(new FileReader(PROPERTIES_FILE_PATH));
+				properties_loaded = true;
+			}
+		} catch (Exception e) {
 			Logger.writeLog(e);
-			return false;
 		}
+
+		return properties_loaded;
 	}
 
 	private static boolean writePropertiesFile() {

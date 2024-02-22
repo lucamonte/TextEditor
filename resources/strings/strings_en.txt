@@ -49,3 +49,5 @@ UNDO=Undo
 REDO=Redo
 DELETE=Delete
 TEXT_NOTIFICATIONS=Show notifications
+TEXT_PRESERVE_COLOR=Preserve color
+TEXT_PRESERVE_FONT=Preserve font

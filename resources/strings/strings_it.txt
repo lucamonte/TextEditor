@@ -49,3 +49,5 @@ UNDO=Annulla
 REDO=Ripeti
 DELETE=Cancella
 TEXT_NOTIFICATIONS=Visualizza notifiche
+TEXT_PRESERVE_COLOR=Preserva colore
+TEXT_PRESERVE_FONT=Preserva font
