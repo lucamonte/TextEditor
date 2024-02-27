@@ -22,14 +22,13 @@ import java.awt.print.PrinterException;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Scanner;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -664,19 +663,9 @@ public class TextEditor {
 
 		filepath = checkFileName(filepath);
 
-		File objfile = new File(filepath);
-
 		try {
 
-			if(!objfile.exists()) {
-				objfile.createNewFile();
-			} 
-
-			BufferedWriter objwriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filepath), StandardCharsets.UTF_8));
-
-			objwriter.write(textarea.getText());
-			objwriter.flush();
-			objwriter.close();
+			textarea.write(new BufferedWriter(new FileWriter(filepath)));
 
 			if(show_notification) {
 				sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SUCCESSFUL_SAVE_NOTIFICATION"), TrayIcon.MessageType.INFO);
@@ -694,19 +683,11 @@ public class TextEditor {
 			if(filechooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {	
 				openfilepath = filechooser.getSelectedFile().toString();
 
-				File objfile = new File(openfilepath);
-
-				Scanner objscanner = new Scanner(objfile, StandardCharsets.UTF_8.name());
-
 				textarea.setText(null);
 
-				while(objscanner.hasNextLine()) {
-					textarea.append(objscanner.nextLine() + System.lineSeparator());
-				}
+				textarea.read(new BufferedReader(new FileReader(openfilepath)), null);
 
 				oldtext = textarea.getText();
-
-				objscanner.close();
 
 				appendFileName();
 
