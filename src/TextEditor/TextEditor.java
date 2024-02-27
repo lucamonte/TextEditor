@@ -649,20 +649,21 @@ public class TextEditor {
 	}
 
 	private static void writeFile(String filepath, boolean show_notification) {
-
 		filepath = checkFileName(filepath);
 
-		try {
+		if(!filepath.equals("")) {
+			try {
 
-			textarea.write(new BufferedWriter(new FileWriter(filepath)));
+				textarea.write(new BufferedWriter(new FileWriter(filepath)));
 
-			if(show_notification) {
-				sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SUCCESSFUL_SAVE_NOTIFICATION"), TrayIcon.MessageType.INFO);
+				if(show_notification) {
+					sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SUCCESSFUL_SAVE_NOTIFICATION"), TrayIcon.MessageType.INFO);
+				}
+
+			} catch(Exception e) {
+				Logger.writeLog(e);
+				sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SAVE_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
 			}
-
-		} catch(Exception e) {
-			Logger.writeLog(e);
-			sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SAVE_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
 		}
 	}
 
@@ -703,19 +704,21 @@ public class TextEditor {
 	}
 
 	private static void readFile() {
-		try {
+		if(!openfilepath.equals("")) {
+			try {
 
-			textarea.read(new BufferedReader(new FileReader(openfilepath)), null);
+				textarea.read(new BufferedReader(new FileReader(openfilepath)), null);
 
-			oldtext = textarea.getText();
+				oldtext = textarea.getText();
 
-			appendFileName();
+				appendFileName();
 
-			sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SUCCESSFUL_OPEN_NOTIFICATION"), TrayIcon.MessageType.INFO);
+				sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SUCCESSFUL_OPEN_NOTIFICATION"), TrayIcon.MessageType.INFO);
 
-		} catch(Exception e) {
-			Logger.writeLog(e);
-			sendSystemTrayNotification(getString("WINDOW_NAME"), getString("OPEN_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
+			} catch(Exception e) {
+				Logger.writeLog(e);
+				sendSystemTrayNotification(getString("WINDOW_NAME"), getString("OPEN_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
+			}
 		}
 	}
 
@@ -766,7 +769,7 @@ public class TextEditor {
 	}
 
 	private static String checkFileName(String filename) {
-		if(!filename.contains(".txt")) {
+		if(!filename.equals("") && !filename.contains(".txt")) {
 			filename += ".txt";
 		}
 
