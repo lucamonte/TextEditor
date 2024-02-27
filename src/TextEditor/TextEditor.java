@@ -16,7 +16,12 @@ import java.awt.TrayIcon;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.FlavorEvent;
 import java.awt.datatransfer.FlavorListener;
+import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.WindowEvent;
 import java.awt.print.PrinterException;
 import java.awt.event.InputEvent;
@@ -27,8 +32,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -199,27 +206,7 @@ public class TextEditor {
 		});	
 
 		menuitem_open.addActionListener(e -> {
-			boolean openfile = true;
-
-			if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && checkAsterisk())) {
-				int dialog = showConfirmDialog(getString("WARNING"), getString("SAVE_BEFORE_CONTINUE"));
-
-				if(dialog == JOptionPane.YES_OPTION) {
-					saveFile();
-					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				} else if (dialog == JOptionPane.CLOSED_OPTION) {
-					openfile = false;
-					frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-				} else {
-					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				}
-			}
-
-			if(openfile) {
-				openFile();
-			}
-
-			restoreCloseBehaviour();
+			openFile();
 		});
 
 		menuitem_save.addActionListener(e -> {
@@ -384,7 +371,7 @@ public class TextEditor {
 		textarea.addCaretListener(new CaretListener() {
 			@Override
 			public void caretUpdate(CaretEvent e) {
-				checkButtons();
+				checkEditing();
 			}
 		});
 
@@ -479,6 +466,8 @@ public class TextEditor {
 		} else {
 			setFont(default_font);
 		}
+
+		setupDragAndDrop();
 
 		addContextMenu();
 
@@ -678,21 +667,51 @@ public class TextEditor {
 	}
 
 	private static void openFile() {
-		try {
+		openFile(false, null);
+	}
 
+	private static void openFile(boolean dragged, File file) {
+		boolean openfile = true;		
+
+		if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && checkAsterisk())) {
+			int dialog = showConfirmDialog(getString("WARNING"), getString("SAVE_BEFORE_CONTINUE"));
+
+			if(dialog == JOptionPane.YES_OPTION) {
+				saveFile();
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			} else if (dialog == JOptionPane.CLOSED_OPTION) {
+				frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+				openfile = false;
+			} else {
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			}
+		}
+
+		if(openfile && !dragged) {
 			if(filechooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {	
 				openfilepath = filechooser.getSelectedFile().toString();
-
-				textarea.setText(null);
-
-				textarea.read(new BufferedReader(new FileReader(openfilepath)), null);
-
-				oldtext = textarea.getText();
-
-				appendFileName();
-
-				sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SUCCESSFUL_OPEN_NOTIFICATION"), TrayIcon.MessageType.INFO);
 			}	
+		}
+
+		if(file != null) {
+			openfilepath = file.getAbsolutePath();
+		}
+
+		readFile();
+
+		restoreCloseBehaviour();
+	}
+
+	private static void readFile() {
+		try {
+
+			textarea.read(new BufferedReader(new FileReader(openfilepath)), null);
+
+			oldtext = textarea.getText();
+
+			appendFileName();
+
+			sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SUCCESSFUL_OPEN_NOTIFICATION"), TrayIcon.MessageType.INFO);
 
 		} catch(Exception e) {
 			Logger.writeLog(e);
@@ -1178,5 +1197,25 @@ public class TextEditor {
 		return new Font(ConfigurationManager.getProperty("font.name"),
 				Integer.parseInt(ConfigurationManager.getProperty("font.style")),
 				Integer.parseInt(ConfigurationManager.getProperty("font.size")));
+	}
+
+	private static void setupDragAndDrop() {
+		new DropTarget(textarea, new DropTargetAdapter() {
+			public void drop(DropTargetDropEvent event) {
+				event.acceptDrop(DnDConstants.ACTION_COPY);
+				try {
+					Transferable transferable = event.getTransferable();
+					if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+						List<?> files = (List<?>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
+						if (!files.isEmpty()) {
+							File file = (File) files.get(0);
+							openFile(true, file);
+						}
+					}
+				} catch (UnsupportedFlavorException | IOException e) {
+					Logger.writeLog(e);
+				}
+			}
+		});
 	}
 }
