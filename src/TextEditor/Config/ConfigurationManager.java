@@ -1,6 +1,7 @@
 package TextEditor.Config;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -36,17 +37,11 @@ public class ConfigurationManager {
 	}
 
 	private static boolean loadPropertiesFile() {
-		boolean properties_saved = true;
-
 		try {
-			if(!new File(PROPERTIES_FILE_PATH).exists()) {
-				properties_saved = saveDefaultProperties();
-			}
+			objproperties.load(new FileReader(PROPERTIES_FILE_PATH));
+			properties_loaded = true;
+		} catch (FileNotFoundException ignore) {
 
-			if(properties_saved) {
-				objproperties.load(new FileReader(PROPERTIES_FILE_PATH));
-				properties_loaded = true;
-			}
 		} catch (Exception e) {
 			Logger.writeLog(e);
 		}

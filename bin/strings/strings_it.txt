@@ -51,3 +51,5 @@ DELETE=Cancella
 TEXT_NOTIFICATIONS=Visualizza notifiche
 TEXT_PRESERVE_COLOR=Preserva colore
 TEXT_PRESERVE_FONT=Preserva font
+UNSUPPORTED_FILE_TITLE=File non supportato
+UNSUPPORTED_FILE_TEXT=Formato file non supportato, è possibile aprire solo documenti .txt

@@ -88,8 +88,6 @@ public class JFontChooser extends JComponent {
 
 	public static final int ERROR_OPTION = -1;
 
-	private static final Font DEFAULT_SELECTED_FONT = new Font(Font.MONOSPACED, Font.PLAIN, 12);
-
 	private static final int[] FONT_STYLE_CODES = {
 			Font.PLAIN,
 			Font.BOLD,
@@ -181,7 +179,10 @@ public class JFontChooser extends JComponent {
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		this.add(contentsPanel);
 		this.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		this.setSelectedFont(DEFAULT_SELECTED_FONT);
+		
+		if(TextEditor.getTextArea() != null) {
+			this.setSelectedFont(TextEditor.getTextArea().getFont());
+		}
 	}
 
 	public JTextField getFontFamilyTextField() {

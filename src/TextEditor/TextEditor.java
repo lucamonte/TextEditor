@@ -30,9 +30,12 @@ import java.awt.event.WindowAdapter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -432,7 +435,7 @@ public class TextEditor {
 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
 		final Color default_color = new Color(0, 0, 0);
-		final Font default_font = new Font(Font.MONOSPACED, Font.PLAIN, 15);
+		final Font default_font = new Font(Font.MONOSPACED, Font.PLAIN, 16);
 
 		if(UIManager.getLookAndFeel().getClass().toString().contains(UIManager.getSystemLookAndFeelClassName())) {
 			scroll.setBorder(null);
@@ -654,7 +657,7 @@ public class TextEditor {
 		if(!filepath.equals("")) {
 			try {
 
-				textarea.write(new BufferedWriter(new FileWriter(filepath)));
+				textarea.write(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filepath), StandardCharsets.UTF_8)));
 
 				if(show_notification) {
 					sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SUCCESSFUL_SAVE_NOTIFICATION"), TrayIcon.MessageType.INFO);
@@ -707,7 +710,7 @@ public class TextEditor {
 		if(!openfilepath.equals("")) {
 			try {
 
-				textarea.read(new BufferedReader(new FileReader(openfilepath)), null);
+				textarea.read(new BufferedReader(new InputStreamReader(new FileInputStream(openfilepath), StandardCharsets.UTF_8)), null);
 
 				oldtext = textarea.getText();
 
@@ -1208,11 +1211,17 @@ public class TextEditor {
 				event.acceptDrop(DnDConstants.ACTION_COPY);
 				try {
 					Transferable transferable = event.getTransferable();
-					if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+					if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {					
 						List<?> files = (List<?>) transferable.getTransferData(DataFlavor.javaFileListFlavor);
-						if (!files.isEmpty()) {
-							File file = (File) files.get(0);
-							openFile(true, file);
+						for (Object obj : files) {
+							if (obj instanceof File) {
+								File file = (File) obj;
+								if (file.getName().toLowerCase().endsWith(".txt")) {
+									openFile(true, file);
+								} else {
+									showErrorDialog(getString("UNSUPPORTED_FILE_TITLE"), getString("UNSUPPORTED_FILE_TEXT"));
+								}
+							}
 						}
 					}
 				} catch (UnsupportedFlavorException | IOException e) {
@@ -1220,5 +1229,9 @@ public class TextEditor {
 				}
 			}
 		});
+	}
+
+	public static JTextArea getTextArea() {
+		return textarea;
 	}
 }

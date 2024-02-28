@@ -51,3 +51,5 @@ DELETE=Delete
 TEXT_NOTIFICATIONS=Show notifications
 TEXT_PRESERVE_COLOR=Preserve color
 TEXT_PRESERVE_FONT=Preserve font
+UNSUPPORTED_FILE_TITLE=Unsupported file
+UNSUPPORTED_FILE_TEXT=Unsupported file format, only .txt documents can be opened
