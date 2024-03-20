@@ -194,7 +194,7 @@ public class TextEditor {
 		//Build font chooser
 		fontchooser = (JFontChooser) rebuildComponent(fontchooser, "TextEditor.CustomElements.JFontChooser");
 
-		//Build font chooser
+		//Build find/replace window
 		findreplace = (FindReplace) rebuildComponent(findreplace, "TextEditor.CustomElements.FindReplace");
 
 		if(SystemTray.isSupported()) {
