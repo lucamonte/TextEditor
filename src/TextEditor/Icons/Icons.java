@@ -15,6 +15,7 @@ public class Icons {
 		DELETE_ALL,
 		DELETE_FILE,
 		EXIT,
+		FIND_REPLACE,
 		NEW_FILE,
 		OPEN_FILE,
 		PASTE,

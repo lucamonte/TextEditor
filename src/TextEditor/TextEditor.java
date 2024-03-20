@@ -61,6 +61,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import TextEditor.Config.ConfigurationManager;
 import TextEditor.CustomElements.ContextMenu;
+import TextEditor.CustomElements.FindReplace;
 import TextEditor.CustomElements.JFontChooser;
 import TextEditor.Translation.TranslationLoader;
 import TextEditor.Translation.TranslationManager;
@@ -84,6 +85,7 @@ public class TextEditor {
 
 	private static JMenuItem menuitem_saveas;
 	private static JMenuItem menuitem_deleteall;
+	private static JMenuItem menuitem_findreplace;
 	private static JMenuItem menuitem_open;
 	private static JMenuItem menuitem_save;
 	private static JMenuItem menuitem_new;
@@ -124,6 +126,7 @@ public class TextEditor {
 	private static KeyStroke shortcut_saveas;
 	private static KeyStroke shortcut_exit;
 	private static KeyStroke shortcut_deleteall;
+	private static KeyStroke shortcut_findreplace;
 	private static KeyStroke shortcut_selectall;
 	private static KeyStroke shortcut_copy;
 	private static KeyStroke shortcut_cut;
@@ -141,6 +144,8 @@ public class TextEditor {
 
 	private static JTextArea textarea;
 	private static JScrollPane scroll;
+
+	private static FindReplace findreplace;
 
 	public static void run() {		
 		//Generate the main window and its relative elements
@@ -186,8 +191,11 @@ public class TextEditor {
 		//Setup file chooser
 		setupFileChooser();
 
-		//Setup font chooser
-		setupFontChooser();
+		//Build font chooser
+		fontchooser = (JFontChooser) rebuildComponent(fontchooser, "TextEditor.CustomElements.JFontChooser");
+
+		//Build font chooser
+		findreplace = (FindReplace) rebuildComponent(findreplace, "TextEditor.CustomElements.FindReplace");
 
 		if(SystemTray.isSupported()) {
 			//Create system tray menu
@@ -207,6 +215,12 @@ public class TextEditor {
 		menuitem_deleteall.addActionListener(e -> {
 			resetTextArea();
 		});	
+
+		menuitem_findreplace.addActionListener(e -> {
+			findreplace.setLocationRelativeTo(frame);
+			findreplace.setVisible(true);
+			findreplace.addEscapeListener(findreplace);
+		});
 
 		menuitem_open.addActionListener(e -> {
 			openFile();
@@ -413,12 +427,18 @@ public class TextEditor {
 		filechooser.addChoosableFileFilter(new FileNameExtensionFilter(getString("TXT_FILE_EXTENSION_DESCRIPTION"), "txt"));
 	}
 
-	private static void setupFontChooser() {
-		if(fontchooser != null) {
-			fontchooser = null;
+	private static Object rebuildComponent(Object component, String classname) {
+		if(component != null) {
+			component = null;
 		}
 
-		fontchooser = new JFontChooser();
+		try {
+			component = Class.forName(classname).getDeclaredConstructor().newInstance();
+		} catch (Exception e) {
+			Logger.writeLog(e);
+		}
+
+		return component;
 	}
 
 	private static void setupFrame() {
@@ -499,6 +519,7 @@ public class TextEditor {
 		shortcut_exit = KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK); //CTRL + Q: quit
 		shortcut_deleteall = KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK); //CTRL + SHIFT + D: delete all
 		shortcut_selectall = KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK); //CTRL + A: select all
+		shortcut_findreplace = KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK); //CTRL + F: find/replace
 		shortcut_copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK); //CTRL + C: copy
 		shortcut_cut = KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK); //CTRL + X: cut
 		shortcut_paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK); //CTRL + V: paste
@@ -519,6 +540,7 @@ public class TextEditor {
 	private static void setAccelerators() {
 		menuitem_saveas.setAccelerator(shortcut_saveas);
 		menuitem_deleteall.setAccelerator(shortcut_deleteall);
+		menuitem_findreplace.setAccelerator(shortcut_findreplace);
 		menuitem_open.setAccelerator(shortcut_open);
 		menuitem_save.setAccelerator(shortcut_save);
 		menuitem_new.setAccelerator(shortcut_new);
@@ -557,6 +579,7 @@ public class TextEditor {
 		menu_text.add(new JSeparator());
 		menu_text.add(menuitem_selectall);
 		menu_text.add(menuitem_deleteall);
+		menu_text.add(menuitem_findreplace);
 		menu_text.add(new JSeparator());
 		menu_text.add(menuitem_selectfont);
 		menu_text.add(menuitem_selectcolor);
@@ -592,6 +615,7 @@ public class TextEditor {
 		menuitem_delete.setIcon(Icons.getImageIcon(Icons.IconTypes.DELETE));
 		menuitem_selectall.setIcon(Icons.getImageIcon(Icons.IconTypes.SELECT_ALL));
 		menuitem_deleteall.setIcon(Icons.getImageIcon(Icons.IconTypes.DELETE_ALL));
+		menuitem_findreplace.setIcon(Icons.getImageIcon(Icons.IconTypes.FIND_REPLACE));
 		menuitem_selectfont.setIcon(Icons.getImageIcon(Icons.IconTypes.SELECT_FONT));
 		menuitem_selectcolor.setIcon(Icons.getImageIcon(Icons.IconTypes.SELECT_COLOR));
 		submenu_language.setIcon(Icons.getImageIcon(Icons.IconTypes.SELECT_LANGUAGE));
@@ -807,7 +831,7 @@ public class TextEditor {
 		showMessageDialog(title, content, JOptionPane.ERROR_MESSAGE);
 	}
 
-	private static void showMessageDialog(String title, Object content, int type) {
+	public static void showMessageDialog(String title, Object content, int type) {
 		JOptionPane.showMessageDialog(frame, content, title, type);
 	}
 
@@ -823,9 +847,11 @@ public class TextEditor {
 		if(textarea.getText().equals("")) {
 			menuitem_deleteall.setEnabled(false);
 			menuitem_selectall.setEnabled(false);
+			menuitem_findreplace.setEnabled(false);
 		} else {
 			menuitem_deleteall.setEnabled(true);
 			menuitem_selectall.setEnabled(true);
+			menuitem_findreplace.setEnabled(true);
 		}
 
 		try {
@@ -875,6 +901,7 @@ public class TextEditor {
 		submenu_language = new JMenu();
 		menuitem_saveas = new JMenuItem();
 		menuitem_deleteall = new JMenuItem();
+		menuitem_findreplace = new JMenuItem();
 		menuitem_open = new JMenuItem();
 		menuitem_save = new JMenuItem();
 		menuitem_new = new JMenuItem();
@@ -913,6 +940,7 @@ public class TextEditor {
 			submenu_language.setText(getString("LANGUAGE_MENU"));	
 			menuitem_saveas.setText(getString("SAVE_AS"));
 			menuitem_deleteall.setText(getString("DELETE_ALL"));
+			menuitem_findreplace.setText(getString("FIND_REPLACE_TITLE"));
 			menuitem_open.setText(getString("OPEN_FILE"));
 			menuitem_save.setText(getString("SAVE_FILE"));
 			menuitem_new.setText(getString("NEW_FILE"));
@@ -941,7 +969,10 @@ public class TextEditor {
 			TranslationManager.loadLanguages();
 
 			//Rebuild font chooser with the new translation
-			setupFontChooser();
+			fontchooser = (JFontChooser) rebuildComponent(fontchooser, "TextEditor.CustomElements.JFontChooser");
+
+			//Rebuild find/replace window with the new translation
+			findreplace = (FindReplace) rebuildComponent(findreplace, "TextEditor.CustomElements.FindReplace");
 
 			if(!startup) {
 				appendFileName();
