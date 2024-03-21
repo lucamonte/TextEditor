@@ -60,3 +60,4 @@ REPLACE_LABEL_TEXT=Replace with:
 REPLACE_BUTTON_TEXT=Replace
 UNABLE_TO_FIND_TEXT_TITLE=Text not found
 UNABLE_TO_FIND_TEXT_MESSAGE=Searched text not found
+REGEX_LABEL=Regular expression
