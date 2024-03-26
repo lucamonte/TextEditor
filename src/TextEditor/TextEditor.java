@@ -218,8 +218,8 @@ public class TextEditor {
 
 		menuitem_findreplace.addActionListener(e -> {
 			findreplace.setLocationRelativeTo(frame);
-			findreplace.setVisible(true);
 			findreplace.addEscapeListener(findreplace);
+			findreplace.setVisible(true);
 		});
 
 		menuitem_open.addActionListener(e -> {

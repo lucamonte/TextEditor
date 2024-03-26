@@ -61,3 +61,5 @@ REPLACE_BUTTON_TEXT=Replace
 UNABLE_TO_FIND_TEXT_TITLE=Text not found
 UNABLE_TO_FIND_TEXT_MESSAGE=Searched text not found
 REGEX_LABEL=Regular expression
+CASE_SENSITIVE_LABEL=Case insensitive
+REPLACE_ALL_LABEL=Replace all occurrences
