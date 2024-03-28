@@ -7,6 +7,8 @@ import javax.swing.KeyStroke;
 import javax.swing.text.JTextComponent;
 import TextEditor.TextEditor;
 import TextEditor.Icons.Icons;
+import TextEditor.Translation.TranslationManager;
+
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -188,13 +190,13 @@ public class ContextMenu extends JPopupMenu {
 	}
 
 	public static void loadStrings() {
-		contextmenuitem_undo.setText(TextEditor.getString("UNDO"));
-		contextmenuitem_redo.setText(TextEditor.getString("REDO"));
-		contextmenuitem_cut.setText(TextEditor.getString("CUT"));
-		contextmenuitem_copy.setText(TextEditor.getString("COPY"));
-		contextmenuitem_paste.setText(TextEditor.getString("PASTE"));
-		contextmenuitem_delete.setText(TextEditor.getString("DELETE"));
-		contextmenuitem_selectall.setText(TextEditor.getString("SELECT_ALL"));
-		contextmenuitem_deleteall.setText(TextEditor.getString("DELETE_ALL"));
+		contextmenuitem_undo.setText(TranslationManager.getString("UNDO"));
+		contextmenuitem_redo.setText(TranslationManager.getString("REDO"));
+		contextmenuitem_cut.setText(TranslationManager.getString("CUT"));
+		contextmenuitem_copy.setText(TranslationManager.getString("COPY"));
+		contextmenuitem_paste.setText(TranslationManager.getString("PASTE"));
+		contextmenuitem_delete.setText(TranslationManager.getString("DELETE"));
+		contextmenuitem_selectall.setText(TranslationManager.getString("SELECT_ALL"));
+		contextmenuitem_deleteall.setText(TranslationManager.getString("DELETE_ALL"));
 	}
 }

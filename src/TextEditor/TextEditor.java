@@ -37,7 +37,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
@@ -78,8 +77,6 @@ public class TextEditor {
 	private static Image icon = Icons.getImage(Icons.IconTypes.APPLICATION);
 	private static TrayIcon trayicon;
 	private static SystemTray systemtray;
-	private static Hashtable<String, String> strings = new Hashtable<String, String>();
-	private static Hashtable<String, String> languages = new Hashtable<String, String>();
 	private static UndoManager undomanager = new UndoManager();
 	private static boolean startup = true;
 
@@ -234,7 +231,7 @@ public class TextEditor {
 			boolean newdoc = true;
 
 			if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && checkAsterisk())) {
-				int dialog = showConfirmDialog(getString("WARNING"), getString("SAVE_BEFORE_CONTINUE"));
+				int dialog = showConfirmDialog(TranslationManager.getString("WARNING"), TranslationManager.getString("SAVE_BEFORE_CONTINUE"));
 
 				if(dialog == JOptionPane.YES_OPTION) {
 					saveFile();
@@ -258,7 +255,7 @@ public class TextEditor {
 			boolean close = true;
 
 			if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && checkAsterisk())) {
-				int dialog = showConfirmDialog(getString("WARNING"), getString("SAVE_BEFORE_EXIT"));
+				int dialog = showConfirmDialog(TranslationManager.getString("WARNING"), TranslationManager.getString("SAVE_BEFORE_EXIT"));
 
 				if(dialog == JOptionPane.YES_OPTION) {
 					saveFile();
@@ -307,7 +304,7 @@ public class TextEditor {
 		});
 
 		menuitem_deletefile.addActionListener(e -> {
-			int dialog = showConfirmDialog(getString("WARNING"), getString("DELETE_CONFIRMATION"));
+			int dialog = showConfirmDialog(TranslationManager.getString("WARNING"), TranslationManager.getString("DELETE_CONFIRMATION"));
 
 			if(dialog == JOptionPane.YES_OPTION) {
 				deleteFile();
@@ -328,11 +325,11 @@ public class TextEditor {
 		menuitem_print.addActionListener(e -> {
 			try {
 				if(textarea.print()){
-					sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SUCCESSFUL_PRINT_NOTIFICATION"), TrayIcon.MessageType.INFO);
+					sendSystemTrayNotification(TranslationManager.getString("WINDOW_NAME"), TranslationManager.getString("SUCCESSFUL_PRINT_NOTIFICATION"), TrayIcon.MessageType.INFO);
 				}
 			} catch(PrinterException ex) {
 				Logger.writeLog(ex);
-				sendSystemTrayNotification(getString("WINDOW_NAME"), getString("PRINT_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
+				sendSystemTrayNotification(TranslationManager.getString("WINDOW_NAME"), TranslationManager.getString("PRINT_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
 			}
 		});
 
@@ -345,7 +342,7 @@ public class TextEditor {
 		});
 
 		menuitem_selectcolor.addActionListener(e -> {
-			setColor(JColorChooser.showDialog(textarea, getString("COLOR_WINDOW_NAME"), textarea.getForeground()));
+			setColor(JColorChooser.showDialog(textarea, TranslationManager.getString("COLOR_WINDOW_NAME"), textarea.getForeground()));
 		});
 
 		menuitem_notifications.addActionListener(e -> {
@@ -397,7 +394,7 @@ public class TextEditor {
 			public void windowClosing(WindowEvent windowEvent) {
 				if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && checkAsterisk())) {
 
-					int dialog = showConfirmDialog(getString("WARNING"), getString("SAVE_BEFORE_EXIT"));
+					int dialog = showConfirmDialog(TranslationManager.getString("WARNING"), TranslationManager.getString("SAVE_BEFORE_EXIT"));
 
 					if(dialog == JOptionPane.YES_OPTION) {
 						saveFile();
@@ -424,7 +421,7 @@ public class TextEditor {
 	private static void setupFileChooser() {
 		filechooser = new JFileChooser();
 		filechooser.setAcceptAllFileFilterUsed(false);
-		filechooser.addChoosableFileFilter(new FileNameExtensionFilter(getString("TXT_FILE_EXTENSION_DESCRIPTION"), "txt"));
+		filechooser.addChoosableFileFilter(new FileNameExtensionFilter(TranslationManager.getString("TXT_FILE_EXTENSION_DESCRIPTION"), "txt"));
 	}
 
 	private static Object rebuildComponent(Object component, String classname) {
@@ -684,12 +681,12 @@ public class TextEditor {
 				textarea.write(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filepath), StandardCharsets.UTF_8)));
 
 				if(show_notification) {
-					sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SUCCESSFUL_SAVE_NOTIFICATION"), TrayIcon.MessageType.INFO);
+					sendSystemTrayNotification(TranslationManager.getString("WINDOW_NAME"), TranslationManager.getString("SUCCESSFUL_SAVE_NOTIFICATION"), TrayIcon.MessageType.INFO);
 				}
 
 			} catch(Exception e) {
 				Logger.writeLog(e);
-				sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SAVE_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
+				sendSystemTrayNotification(TranslationManager.getString("WINDOW_NAME"), TranslationManager.getString("SAVE_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
 			}
 		}
 	}
@@ -702,7 +699,7 @@ public class TextEditor {
 		boolean openfile = true;		
 
 		if(openfilepath.equals("") && !textarea.getText().equals("") || (!openfilepath.equals("") && checkAsterisk())) {
-			int dialog = showConfirmDialog(getString("WARNING"), getString("SAVE_BEFORE_CONTINUE"));
+			int dialog = showConfirmDialog(TranslationManager.getString("WARNING"), TranslationManager.getString("SAVE_BEFORE_CONTINUE"));
 
 			if(dialog == JOptionPane.YES_OPTION) {
 				saveFile();
@@ -740,11 +737,11 @@ public class TextEditor {
 
 				appendFileName();
 
-				sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SUCCESSFUL_OPEN_NOTIFICATION"), TrayIcon.MessageType.INFO);
+				sendSystemTrayNotification(TranslationManager.getString("WINDOW_NAME"), TranslationManager.getString("SUCCESSFUL_OPEN_NOTIFICATION"), TrayIcon.MessageType.INFO);
 
 			} catch(Exception e) {
 				Logger.writeLog(e);
-				sendSystemTrayNotification(getString("WINDOW_NAME"), getString("OPEN_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
+				sendSystemTrayNotification(TranslationManager.getString("WINDOW_NAME"), TranslationManager.getString("OPEN_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
 			}
 		}
 	}
@@ -760,11 +757,11 @@ public class TextEditor {
 			checkEditing(true);
 			appendFileName();
 
-			sendSystemTrayNotification(getString("WINDOW_NAME"), getString("SUCCESSFUL_DELETE_NOTIFICATION"), TrayIcon.MessageType.INFO);
+			sendSystemTrayNotification(TranslationManager.getString("WINDOW_NAME"), TranslationManager.getString("SUCCESSFUL_DELETE_NOTIFICATION"), TrayIcon.MessageType.INFO);
 
 		} catch(Exception e) {
 			Logger.writeLog(e);
-			sendSystemTrayNotification(getString("WINDOW_NAME"), getString("DELETE_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
+			sendSystemTrayNotification(TranslationManager.getString("WINDOW_NAME"), TranslationManager.getString("DELETE_ERROR_NOTIFICATION"), TrayIcon.MessageType.ERROR);
 		}
 	}
 
@@ -781,7 +778,7 @@ public class TextEditor {
 	}
 
 	private static void resetTitleBar(boolean saved) {
-		frame.setTitle(getString("WINDOW_NAME"));
+		frame.setTitle(TranslationManager.getString("WINDOW_NAME"));
 		checkEditing(saved);
 	}
 
@@ -933,38 +930,38 @@ public class TextEditor {
 		//Read translation file
 		if(TranslationLoader.parse(TranslationManager.getSelectedLanguage())) {
 
-			frame.setTitle(getString("WINDOW_NAME"));
-			menu_file.setText(getString("FILE_MENU"));
-			menu_text.setText(getString("TEXT_MENU"));
-			menu_settings.setText(getString("SETTINGS_MENU"));
-			submenu_language.setText(getString("LANGUAGE_MENU"));	
-			menuitem_saveas.setText(getString("SAVE_AS"));
-			menuitem_deleteall.setText(getString("DELETE_ALL"));
-			menuitem_findreplace.setText(getString("FIND_REPLACE_TITLE"));
-			menuitem_open.setText(getString("OPEN_FILE"));
-			menuitem_save.setText(getString("SAVE_FILE"));
-			menuitem_new.setText(getString("NEW_FILE"));
-			menuitem_exit.setText(getString("CLOSE_EDITOR"));
-			menuitem_selectall.setText(getString("SELECT_ALL"));
-			menuitem_undo.setText(getString("UNDO"));
-			menuitem_redo.setText(getString("REDO"));
-			menuitem_copy.setText(getString("COPY"));
-			menuitem_cut.setText(getString("CUT"));
-			menuitem_paste.setText(getString("PASTE"));
-			menuitem_delete.setText(getString("DELETE"));
-			menuitem_deletefile.setText(getString("DELETE_FILE"));
-			menuitem_print.setText(getString("PRINT_FILE"));
-			menuitem_selectfont.setText(getString("TEXT_FORMAT"));
-			menuitem_selectcolor.setText(getString("TEXT_COLOR"));
-			menuitem_notifications.setText(getString("TEXT_NOTIFICATIONS"));
-			menuitem_preservecolor.setText(getString("TEXT_PRESERVE_COLOR"));
-			menuitem_preservefont.setText(getString("TEXT_PRESERVE_FONT"));
-			traymenuitem_new.setLabel(getString("NEW_FILE"));
-			traymenuitem_exit.setLabel(getString("CLOSE_EDITOR"));
-			traymenuitem_save.setLabel(getString("SAVE_FILE"));
-			traymenuitem_saveas.setLabel(getString("SAVE_AS"));
-			traymenuitem_delete.setLabel(getString("DELETE_FILE"));
-			traymenuitem_print.setLabel(getString("PRINT_FILE"));
+			frame.setTitle(TranslationManager.getString("WINDOW_NAME"));
+			menu_file.setText(TranslationManager.getString("FILE_MENU"));
+			menu_text.setText(TranslationManager.getString("TEXT_MENU"));
+			menu_settings.setText(TranslationManager.getString("SETTINGS_MENU"));
+			submenu_language.setText(TranslationManager.getString("LANGUAGE_MENU"));	
+			menuitem_saveas.setText(TranslationManager.getString("SAVE_AS"));
+			menuitem_deleteall.setText(TranslationManager.getString("DELETE_ALL"));
+			menuitem_findreplace.setText(TranslationManager.getString("FIND_REPLACE_TITLE"));
+			menuitem_open.setText(TranslationManager.getString("OPEN_FILE"));
+			menuitem_save.setText(TranslationManager.getString("SAVE_FILE"));
+			menuitem_new.setText(TranslationManager.getString("NEW_FILE"));
+			menuitem_exit.setText(TranslationManager.getString("CLOSE_EDITOR"));
+			menuitem_selectall.setText(TranslationManager.getString("SELECT_ALL"));
+			menuitem_undo.setText(TranslationManager.getString("UNDO"));
+			menuitem_redo.setText(TranslationManager.getString("REDO"));
+			menuitem_copy.setText(TranslationManager.getString("COPY"));
+			menuitem_cut.setText(TranslationManager.getString("CUT"));
+			menuitem_paste.setText(TranslationManager.getString("PASTE"));
+			menuitem_delete.setText(TranslationManager.getString("DELETE"));
+			menuitem_deletefile.setText(TranslationManager.getString("DELETE_FILE"));
+			menuitem_print.setText(TranslationManager.getString("PRINT_FILE"));
+			menuitem_selectfont.setText(TranslationManager.getString("TEXT_FORMAT"));
+			menuitem_selectcolor.setText(TranslationManager.getString("TEXT_COLOR"));
+			menuitem_notifications.setText(TranslationManager.getString("TEXT_NOTIFICATIONS"));
+			menuitem_preservecolor.setText(TranslationManager.getString("TEXT_PRESERVE_COLOR"));
+			menuitem_preservefont.setText(TranslationManager.getString("TEXT_PRESERVE_FONT"));
+			traymenuitem_new.setLabel(TranslationManager.getString("NEW_FILE"));
+			traymenuitem_exit.setLabel(TranslationManager.getString("CLOSE_EDITOR"));
+			traymenuitem_save.setLabel(TranslationManager.getString("SAVE_FILE"));
+			traymenuitem_saveas.setLabel(TranslationManager.getString("SAVE_AS"));
+			traymenuitem_delete.setLabel(TranslationManager.getString("DELETE_FILE"));
+			traymenuitem_print.setLabel(TranslationManager.getString("PRINT_FILE"));
 
 			TranslationManager.loadLanguages();
 
@@ -985,7 +982,7 @@ public class TextEditor {
 	}
 
 	private static void updateStrings() {
-		strings.clear();
+		TranslationManager.clearStrings();
 		loadStrings();
 	}
 
@@ -1008,14 +1005,6 @@ public class TextEditor {
 		}
 	}
 
-	public static String getString(String key) {
-		return strings.get(key);
-	}
-
-	public static void putString(String key, String string) {
-		strings.put(key, string);
-	}
-
 	private static void createTrayMenu() {
 
 		if (SystemTray.isSupported()) {
@@ -1023,7 +1012,7 @@ public class TextEditor {
 			systemtray = SystemTray.getSystemTray();
 
 			traymenu = new PopupMenu();
-			trayicon = new TrayIcon(icon, getString("WINDOW_NAME"), traymenu);
+			trayicon = new TrayIcon(icon, TranslationManager.getString("WINDOW_NAME"), traymenu);
 			trayicon.setImageAutoSize(true);
 
 			createTrayActionListeners();
@@ -1128,17 +1117,13 @@ public class TextEditor {
 		System.exit(0); //Terminate process
 	}
 
-	public static void putLanguage(String languageCode, String language) {
-		languages.put(languageCode, language);
-	}
-
 	private static void createLanguagesMenu() {
 		String langCode = "";
-		Enumeration<String> languageCodes = languages.keys();
+		Enumeration<String> languageCodes = TranslationManager.getLanguageKeys();
 
 		while(languageCodes.hasMoreElements()) {
 			langCode = languageCodes.nextElement();
-			newLanguageMenuItem(langCode, languages.get(langCode));
+			newLanguageMenuItem(langCode, TranslationManager.getLanguage(langCode));
 			updateLanguagesMenu(TranslationManager.getSelectedLanguage());
 		}
 	}
@@ -1154,7 +1139,7 @@ public class TextEditor {
 			}
 
 			if(menuitem_language.getName().equals("sys")) {
-				menuitem_language.setText(getString("SYSTEM_LANGUAGE"));
+				menuitem_language.setText(TranslationManager.getString("SYSTEM_LANGUAGE"));
 			}
 		}
 	}
@@ -1169,7 +1154,7 @@ public class TextEditor {
 				updateStrings();
 				updateLanguagesMenu(languageCode);
 			} else {
-				showErrorDialog(getString("ERROR_SETTING_LANGUAGE_TITLE"), getString("ERROR_SETTING_LANGUAGE"));
+				showErrorDialog(TranslationManager.getString("ERROR_SETTING_LANGUAGE_TITLE"), TranslationManager.getString("ERROR_SETTING_LANGUAGE"));
 			}
 		});
 
@@ -1250,7 +1235,7 @@ public class TextEditor {
 								if (file.getName().toLowerCase().endsWith(".txt")) {
 									openFile(true, file);
 								} else {
-									showErrorDialog(getString("UNSUPPORTED_FILE_TITLE"), getString("UNSUPPORTED_FILE_TEXT"));
+									showErrorDialog(TranslationManager.getString("UNSUPPORTED_FILE_TITLE"), TranslationManager.getString("UNSUPPORTED_FILE_TEXT"));
 								}
 							}
 						}

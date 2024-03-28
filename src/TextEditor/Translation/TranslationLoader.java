@@ -71,7 +71,7 @@ public class TranslationLoader {
 			while(objscanner.hasNextLine()) {
 				splitLine = objscanner.nextLine().split(SEPARATOR, -2);
 
-				TextEditor.putString(splitLine[0].trim(), splitLine[1].trim());
+				TranslationManager.putString(splitLine[0].trim(), splitLine[1].trim());
 			} 
 
 			objscanner.close();
@@ -83,5 +83,4 @@ public class TranslationLoader {
 	public static String getSeparator() {
 		return SEPARATOR;
 	}
-	
 }

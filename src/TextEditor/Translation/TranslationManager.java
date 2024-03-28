@@ -1,12 +1,16 @@
 package TextEditor.Translation;
 
 import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Scanner;
 import TextEditor.TextEditor;
 import TextEditor.Errors.ErrorPaneBridge;
 import TextEditor.Config.ConfigurationManager;
 
 public class TranslationManager {
+	private static Hashtable<String, String> strings = new Hashtable<String, String>();
+	private static Hashtable<String, String> languages = new Hashtable<String, String>();
 
 	public static void loadLanguages() {
 
@@ -24,12 +28,12 @@ public class TranslationManager {
 		}
 
 		if(objscanner != null) {
-			TextEditor.putLanguage("sys", TextEditor.getString("SYSTEM_LANGUAGE"));
+			putLanguage("sys", getString("SYSTEM_LANGUAGE"));
 
 			while(objscanner.hasNextLine()) {
 				splitLine = objscanner.nextLine().split(TranslationLoader.getSeparator(), -2);
 
-				TextEditor.putLanguage(splitLine[0].trim(), splitLine[1].trim());
+				putLanguage(splitLine[0].trim(), splitLine[1].trim());
 			} 
 
 			objscanner.close();
@@ -42,5 +46,29 @@ public class TranslationManager {
 
 	public static boolean setSelectedLanguage(String languageCode) {
 		return ConfigurationManager.setProperty("default_language", languageCode);
+	}
+	
+	public static void putLanguage(String languageCode, String language) {
+		languages.put(languageCode, language);
+	}
+	
+	public static String getLanguage(String languageCode) {
+		return languages.get(languageCode);
+	}
+	
+	public static Enumeration<String> getLanguageKeys() {
+		return languages.keys();
+	}
+	
+	public static void putString(String key, String string) {
+		strings.put(key, string);
+	}
+	
+	public static String getString(String key) {
+		return strings.get(key);
+	}
+	
+	public static void clearStrings() {
+		strings.clear();
 	}
 }
